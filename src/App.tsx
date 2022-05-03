@@ -20,6 +20,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="about" element={<About />}/>
+          <Route path="signup" element={<SignUp />}/>
+          <Route path="login" element={<LogIn />}/>
         </Routes>
       </header>
     </div>
@@ -35,6 +37,12 @@ function Home() {
       </main>
       <nav>
         <Link to="/about">About</Link>
+      </nav>
+      <nav>
+        <Link to="/signup">SignUp</Link>
+      </nav>
+      <nav>
+        <Link to="/login">Log In</Link>
       </nav>
     </>
   );
@@ -53,8 +61,58 @@ function About() {
       <nav>
         <Link to="/">Home</Link>
       </nav>
+      <nav>
+        <Link to="/signup">SignUp</Link>
+      </nav>
+      <nav>
+        <Link to="/login">Log In</Link>
+      </nav>
     </>
   );
+}
+
+function SignUp() {
+  return (
+    <>
+      <main>
+        <h2>Sign Up Page</h2>
+        <p>
+          form here
+        </p>
+      </main>
+      <nav>
+        <Link to="/">Home</Link>
+      </nav>
+      <nav>
+        <Link to="/about">About</Link>
+      </nav>
+      <nav>
+        <Link to="/login">Log In</Link>
+      </nav>
+    </>
+  )
+}
+
+function LogIn() {
+  return (
+    <>
+      <main>
+        <h2>Log In Page</h2>
+        <p>
+          form here
+        </p>
+      </main>
+      <nav>
+        <Link to="/">Home</Link>
+      </nav>
+      <nav>
+        <Link to="/about">About</Link>
+      </nav>
+      <nav>
+        <Link to="/signup">SignUp</Link>
+      </nav>
+    </>
+  )
 }
 
 export default App;
