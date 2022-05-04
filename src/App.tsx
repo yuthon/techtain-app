@@ -6,10 +6,12 @@ import SignUp from './SignUp';
 import LogIn from './LogIn';
 import ReviewIndex from './ReviewIndex';
 import MyReviewIndex from './MyReviewIndex';
+import { AuthorizeProvider } from './AuthorizeProvider';
 
 function App(): ReactElement {
   return (
     <div className="App">
+      <AuthorizeProvider>
       <header className="App-header">
         <h1>Book Review App</h1>
       </header>
@@ -23,6 +25,7 @@ function App(): ReactElement {
           <Route path="myreview-index" element={<MyReviewIndex />}/>
         </Routes>
       </main>
+      </AuthorizeProvider>
     </div>
   );
 }

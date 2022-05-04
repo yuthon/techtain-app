@@ -43,16 +43,21 @@ function LogIn(): ReactElement {
       "password": userInput.password,
     }
 
-    const url = (await fetch("https://api-for-missions-and-railways.herokuapp.com/signin"
+    const url = await fetch("https://api-for-missions-and-railways.herokuapp.com/signin"
     , {method: 'POST', body: JSON.stringify(userInfo)}
     ).then(res => {
       return res.json();
     })
-    )
     if (await url.token) {
       setResStatus(200);
       setLoginError(false);
-      console.log(await url.token)
+      console.log(await url.token);
+      // 認証トークンをローカルストレージに保存
+      // 指定された認証APIを使わねばならず、返されるトークンをlocalStrageに保存するしかないと思われるが、
+      // これはあらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため
+      // 項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく。
+      // もっと強いセキュリティを持つ方法も検討したい
+      localStorage.setItem('v_|2Q)iA~*rn%', url.token);
     } else {
       if (await url.ErrorCode) {
         if (await url.ErrorCode === 400) {

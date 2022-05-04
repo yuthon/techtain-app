@@ -1,5 +1,6 @@
-import { ReactElement, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { ReactElement, useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthorizeContext } from './AuthorizeProvider';
 
 type ReviewType = {
   detail: string,
@@ -11,16 +12,17 @@ type ReviewType = {
   url: string,
 }
 
-
 function MyReviewIndex (): ReactElement {
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
 
+  const { userToken } = useContext(AuthorizeContext);
+
   async function getReviews(): Promise<void> {
     let listToDisplay: Array<ReviewType>;
-    // テスト投稿のレビューを除外して、レビューを10件取得する
+    // テスト投稿のレビューを除外して、レビューを取得する
     // まずapiから最初の10件を取得
     const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books`
-    , {headers: new Headers({ 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTE3Mjk2MjMsImlhdCI6IjIwMjItMDUtMDRUMDU6NDc6MDMuNjY5NzM3ODA2WiIsInN1YiI6IjU0NTQ2NTU3MzU0IiwidXNlcl9pZCI6IjVmN2MzZGY3LTU5NWItNDdkZi04ZTc3LTQ2YTg3NjMxZjRhZSJ9.xRkj-suOGgaSAXipUkFLsMv2LgcAJB7F9Mk2yxBnPY4'})}
+    , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
     ).then(res => {
       return res.json();
     })
@@ -48,7 +50,7 @@ function MyReviewIndex (): ReactElement {
     for (let i=0; i < 4; i ++) {
       if (listToDisplay.length < 10) {
         const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books?offset=${(i+1)*10}`
-        , {headers: new Headers({ 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTE3Mjk2MjMsImlhdCI6IjIwMjItMDUtMDRUMDU6NDc6MDMuNjY5NzM3ODA2WiIsInN1YiI6IjU0NTQ2NTU3MzU0IiwidXNlcl9pZCI6IjVmN2MzZGY3LTU5NWItNDdkZi04ZTc3LTQ2YTg3NjMxZjRhZSJ9.xRkj-suOGgaSAXipUkFLsMv2LgcAJB7F9Mk2yxBnPY4'})}
+        , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
         ).then(res => {
           return res.json();
         })
@@ -110,6 +112,7 @@ function MyReviewIndex (): ReactElement {
 
   useEffect(()=>{
     getReviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   
   return (
