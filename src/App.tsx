@@ -1,9 +1,11 @@
-import { FC, ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement } from 'react';
 import logo from './logo.svg';
 import { Routes, Route, Link } from "react-router-dom";
 import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
+import ReviewIndex from './ReviewIndex';
+import MyReviewIndex from './MyReviewIndex';
 
 function App(): ReactElement {
   return (
@@ -17,6 +19,8 @@ function App(): ReactElement {
           <Route path="about" element={<About />}/>
           <Route path="signup" element={<SignUp />}/>
           <Route path="login" element={<LogIn />}/>
+          <Route path="review-index" element={<ReviewIndex />}/>
+          <Route path="myreview-index" element={<MyReviewIndex />}/>
         </Routes>
       </main>
     </div>
@@ -40,6 +44,9 @@ function Home(): ReactElement {
       <nav>
         <Link to="/login">Log In</Link>
       </nav>
+      <nav>
+        <Link to="/review-index">レビュー一覧</Link>
+      </nav>
     </>
   );
 }
@@ -62,6 +69,9 @@ function About(): ReactElement {
       </nav>
       <nav>
         <Link to="/login">Log In</Link>
+      </nav>
+      <nav>
+        <Link to="/review-index">レビュー一覧</Link>
       </nav>
     </>
   );

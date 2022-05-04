@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Link } from "react-router-dom";
 
 type UserInputType = {
@@ -148,6 +148,9 @@ function SignUp(): ReactElement {
       </nav>
       <nav>
         <Link to="/login">Log In</Link>
+      </nav>
+      <nav>
+        <Link to="/review-index">レビュー一覧</Link>
       </nav>
     </>
   )
