@@ -5,6 +5,7 @@ import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import ReviewIndex from './ReviewIndex';
+import MyReviewIndex from './MyReviewIndex';
 
 function App(): ReactElement {
   return (
@@ -19,6 +20,7 @@ function App(): ReactElement {
           <Route path="signup" element={<SignUp />}/>
           <Route path="login" element={<LogIn />}/>
           <Route path="review-index" element={<ReviewIndex />}/>
+          <Route path="myreview-index" element={<MyReviewIndex />}/>
         </Routes>
       </main>
     </div>
