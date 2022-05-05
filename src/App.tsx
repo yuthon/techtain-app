@@ -1,4 +1,4 @@
-import { ReactElement, useState, useContext, useEffect } from 'react';
+import { ReactElement, useContext } from 'react';
 import logo from './logo.svg';
 import bookLogo from './bookLogo.svg';
 import { Routes, Route, Link, Navigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { AuthorizeContext } from './AuthorizeProvider';
 import SideBar from './Sidebar';
 import Profile from './Profile';
 import NewReview from './NewReview';
+import ReviewDetail from './ReviewDetail';
 
 function App(): ReactElement {
   return (
@@ -51,6 +52,7 @@ function Main(): ReactElement {
           <Route path="myreview-index" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <MyReviewIndex />}/>
           <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
           <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
+          <Route path="detail/:bookId" element={<ReviewDetail />}/>
         </Routes>
       </div>
     </div>

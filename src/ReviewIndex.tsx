@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
@@ -64,7 +65,7 @@ function ReviewIndex (): ReactElement {
         })
         // 同一の書籍に対するレビューを除外する
         list = list.filter((review: ReviewType, index, self)=>{
-          const titleList = self.map(review => review.title);
+          const titleList: Array<string> = self.map(review => review.title);
           return (
             titleList.indexOf(review.title) === index
           )
@@ -118,6 +119,7 @@ function ReviewIndex (): ReactElement {
             <p>{review.review}</p>
             <p>{review.reviewer}</p>
             <a href={review.url}>書籍へのリンク</a>
+            <a href={`detail/${review.id}`}>詳細</a>
           </div>
         )
       )}
