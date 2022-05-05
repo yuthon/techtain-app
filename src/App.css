@@ -82,3 +82,6 @@ a {
   width: calc(100vw - 256px);
 }
 
+#review-column {
+  height: 200px;
+}

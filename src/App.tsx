@@ -11,9 +11,9 @@ import { AuthorizeProvider } from './AuthorizeProvider';
 import { AuthorizeContext } from './AuthorizeProvider';
 import SideBar from './Sidebar';
 import Profile from './Profile';
+import NewReview from './NewReview';
 
 function App(): ReactElement {
-  // localStorage.removeItem('v_|2Q)iA~*rn%');
   return (
     <>
     <div className="App">
@@ -50,6 +50,7 @@ function Main(): ReactElement {
           <Route path="review-index" element={<ReviewIndex />}/>
           <Route path="myreview-index" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <MyReviewIndex />}/>
           <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
+          <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
         </Routes>
       </div>
     </div>

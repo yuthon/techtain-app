@@ -30,8 +30,8 @@ function MyReviewIndex (): ReactElement {
       return (
         // 有効なurlが含まれるかどうか
         review.url.indexOf('http') > -1 &&
-        // 詳細が30文字以上
-        review.detail.length > 30 &&
+        // 詳細が25文字以上
+        review.detail.length > 25 &&
         // レビューが5文字以上
         review.review.length > 4
       )
@@ -58,8 +58,8 @@ function MyReviewIndex (): ReactElement {
           return (
             // 有効なurlが含まれるかどうか
             review.url.indexOf('http') > -1 &&
-            // 詳細が30文字以上
-            review.detail.length > 30 &&
+            // 詳細が25文字以上
+            review.detail.length > 25 &&
             // レビューが5文字以上
             review.review.length > 4
           )
