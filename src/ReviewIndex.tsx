@@ -1,5 +1,4 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
@@ -122,18 +121,6 @@ function ReviewIndex (): ReactElement {
           </div>
         )
       )}
-      <nav>
-        <Link to="/about">About</Link>
-      </nav>
-      <nav>
-        <Link to="/signup">SignUp</Link>
-      </nav>
-      <nav>
-        <Link to="/login">Log In</Link>
-      </nav>
-      <nav>
-        <Link to="/">Home</Link>
-      </nav>
     </>
   )
 }
