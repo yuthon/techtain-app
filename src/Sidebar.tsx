@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import bookLogo from './bookLogo.svg';
 import { AuthorizeContext } from './AuthorizeProvider';
 
 type userDataType = {
@@ -27,7 +26,7 @@ function SideBar(): ReactElement {
   const logOut = () => {
     localStorage.removeItem('v_|2Q)iA~*rn%');
     authContext.setUserToken('');
-    authContext.setIsAuthrized(false);
+    authContext.setIsAuthorized(false);
   };
 
   useEffect(()=>{
@@ -56,6 +55,9 @@ function SideBar(): ReactElement {
         </nav>
         <nav>
           <Link to="/profile">ユーザ情報編集</Link>
+        </nav>
+        <nav>
+          <Link to="/edit/:bookId">レビューの編集</Link>
         </nav>
         <nav>
           <Link onClick={()=>{logOut()}} to="/login">ログアウト</Link>

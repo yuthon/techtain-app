@@ -1,5 +1,6 @@
 import { ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
+import { useParams } from "react-router-dom";
 
 type UserInputType = {
   title: string,
@@ -8,8 +9,11 @@ type UserInputType = {
   text: string
 }
 
-const NewReview = ():ReactElement => {
-  const { userToken } = useContext(AuthorizeContext)
+const ReviewEdit = (): ReactElement => {
+
+  const { userToken } = useContext(AuthorizeContext);
+
+  let { bookId } = useParams<string>();
 
   const [userInput, setUserInput] = useState<UserInputType>({title:'',detail:'',url:'',text:''});
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -21,8 +25,9 @@ const NewReview = ():ReactElement => {
   const urlRef = useRef<HTMLInputElement>(null!);
   const textRef = useRef<HTMLTextAreaElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
+  const deleteBtnRef = useRef<HTMLButtonElement>(null!);
 
-  async function submit(): Promise<void> {
+  async function save(): Promise<void> {
     const url = await fetch(
       "https://api-for-missions-and-railways.herokuapp.com/books",
       {
@@ -59,11 +64,43 @@ const NewReview = ():ReactElement => {
           setResStatus(500);
           setLoginError(true);
         }
-        console.log(loginError)
-        console.log(resStatus)
       }
     }
-  }
+  };
+
+  async function deleteReview(): Promise<void> {
+    const review = await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
+      {
+        method: 'DELETE',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+      }
+    ).then(res => {
+      return res;
+    })
+    if (await review) {
+      setResStatus(200);
+      setLoginError(false);
+    } else {
+      // if (await review.ErrorCode) {
+      //   if (await review.ErrorCode === 400) {
+      //     console.log(await review.ErrorMessageJP)
+      //     setResStatus(400);
+      //     setLoginError(true);
+      //   }
+      //   else if (await review.ErrorCode === 403) {
+      //     console.log(await review.ErrorMessageJP)
+      //     setResStatus(403);
+      //     setLoginError(true);
+      //   }
+      //   else if (await review.ErrorCode === 500) {
+      //     console.log(await review.ErrorMessageJP)
+      //     setResStatus(500);
+      //     setLoginError(true);
+      //   }
+      // }
+    }
+  };
 
   const checkInput = (): void =>{
     // ユーザーの入力をstateに反映
@@ -85,7 +122,7 @@ const NewReview = ():ReactElement => {
     else {
       setIsFormValid(false);
     }
-  }
+  };
 
   useEffect(()=>{
     // フォームが必要な条件を満たすならボタンを有効化
@@ -106,9 +143,10 @@ const NewReview = ():ReactElement => {
       <input className="form-control" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
       <span className="input-group-text">レビュー</span>
       <textarea className="form-control" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
-      <button className="btn btn-primary" onClick={()=>{submit()}} ref={btnRef}>レビューを投稿</button>
+      <button className="btn btn-primary" onClick={()=>{save()}} ref={btnRef}>保存</button>
+      <button className="btn btn-primary" onClick={()=>{deleteReview()}} ref={deleteBtnRef}>レビューの削除</button>
     </div>
   )
 }
 
-export default NewReview;
+export default ReviewEdit;
