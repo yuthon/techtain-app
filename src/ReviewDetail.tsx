@@ -52,13 +52,14 @@ const ReviewDetail = ():ReactElement => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  return !reviewDetail.isMine ? (
+  return reviewDetail.isMine ? (
     <div className="">
       <h4>{reviewDetail.title}</h4>
       <p>{reviewDetail.detail}</p>
       <p>{reviewDetail.review}</p>
       <p>{reviewDetail.reviewer}</p>
       <a href={reviewDetail.url}>書籍へのリンク</a>
+      <a href={`/edit/${reviewDetail.id}`}>レビューの編集</a>
     </div>
   ) : (
     <div className="">
@@ -67,7 +68,6 @@ const ReviewDetail = ():ReactElement => {
       <p>{reviewDetail.review}</p>
       <p>{reviewDetail.reviewer}</p>
       <a href={reviewDetail.url}>書籍へのリンク</a>
-      <a href={`/edit/${reviewDetail.id}`}>レビューの編集</a>
     </div>
   )
 }

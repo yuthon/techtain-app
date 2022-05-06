@@ -6,7 +6,7 @@ import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import ReviewIndex from './ReviewIndex';
-import MyReviewIndex from './MyReviewIndex';
+import ReviewIndexAuth from './ReviewIndexAuth';
 import  AuthorizeProvider  from './AuthorizeProvider';
 import { AuthorizeContext } from './AuthorizeProvider';
 import SideBar from './Sidebar';
@@ -49,8 +49,8 @@ function Main(): ReactElement {
           <Route path="about" element={<About />}/>
           <Route path="signup" element={ authContext.isAuthorized ? <Navigate to="/"/> : <SignUp />}/>
           <Route path="login" element={ authContext.isAuthorized ? <Navigate to="/"/> : <LogIn />}/>
-          <Route path="review-index" element={<ReviewIndex />}/>
-          <Route path="myreview-index" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <MyReviewIndex />}/>
+          {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
+          <Route path="review-index" element={ !authContext.isAuthorized ? <ReviewIndex /> : <ReviewIndexAuth />}/>
           <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
           <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
           <Route path="detail/:bookId" element={<ReviewDetail />}/>

@@ -1,4 +1,5 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState, useContext } from 'react';
+import { AuthorizeContext } from './AuthorizeProvider';
 
 type ReviewType = {
   detail: string,
@@ -9,8 +10,10 @@ type ReviewType = {
   url: string,
 }
 
-
 function ReviewIndex (): ReactElement {
+
+  const { isAuthorized } = useContext(AuthorizeContext);
+
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
 
   async function getReviews(): Promise<void> {
@@ -107,7 +110,7 @@ function ReviewIndex (): ReactElement {
     getReviews();
   },[])
   
-  return (
+  return isAuthorized ? (
     <>
       <h2>Review Index</h2>
       {reviews!.map(
@@ -119,6 +122,21 @@ function ReviewIndex (): ReactElement {
             <p>{review.reviewer}</p>
             <a href={review.url}>書籍へのリンク</a>
             <a href={`/detail/${review.id}`}>詳細</a>
+          </div>
+        )
+      )}
+    </>
+  ) : (
+    <>
+      <h2>Review Index</h2>
+      {reviews!.map(
+        (review: ReviewType, index: number) => (
+          <div className="border" key={index}>
+            <h4>{review.title}</h4>
+            <p>{review.detail}</p>
+            <p>{review.review}</p>
+            <p>{review.reviewer}</p>
+            <a href={review.url}>書籍へのリンク</a>
           </div>
         )
       )}

@@ -11,7 +11,7 @@ type ReviewType = {
   url: string,
 }
 
-function MyReviewIndex (): ReactElement {
+function ReviewIndexAuth (): ReactElement {
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
 
   const { userToken } = useContext(AuthorizeContext);
@@ -107,8 +107,6 @@ function MyReviewIndex (): ReactElement {
     }
   }
 
-
-
   useEffect(()=>{
     getReviews();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,4 +131,4 @@ function MyReviewIndex (): ReactElement {
   )
 }
 
-export default MyReviewIndex;
+export default ReviewIndexAuth;
