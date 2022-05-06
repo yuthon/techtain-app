@@ -1,5 +1,4 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
@@ -119,7 +118,7 @@ function ReviewIndex (): ReactElement {
             <p>{review.review}</p>
             <p>{review.reviewer}</p>
             <a href={review.url}>書籍へのリンク</a>
-            <a href={`detail/${review.id}`}>詳細</a>
+            <a href={`/detail/${review.id}`}>詳細</a>
           </div>
         )
       )}

@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,

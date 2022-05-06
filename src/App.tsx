@@ -7,12 +7,13 @@ import SignUp from './SignUp';
 import LogIn from './LogIn';
 import ReviewIndex from './ReviewIndex';
 import MyReviewIndex from './MyReviewIndex';
-import { AuthorizeProvider } from './AuthorizeProvider';
+import  AuthorizeProvider  from './AuthorizeProvider';
 import { AuthorizeContext } from './AuthorizeProvider';
 import SideBar from './Sidebar';
 import Profile from './Profile';
 import NewReview from './NewReview';
 import ReviewDetail from './ReviewDetail';
+import ReviewEdit from './ReviewEdit';
 
 function App(): ReactElement {
   return (
@@ -53,6 +54,7 @@ function Main(): ReactElement {
           <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
           <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
           <Route path="detail/:bookId" element={<ReviewDetail />}/>
+          <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <ReviewEdit />}/>
         </Routes>
       </div>
     </div>

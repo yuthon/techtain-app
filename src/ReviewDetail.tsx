@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { Route, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 type detailType = {
   id: string,
@@ -52,14 +52,23 @@ const ReviewDetail = ():ReactElement => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  return (
-      <div className="">
-        <h4>{reviewDetail.title}</h4>
-        <p>{reviewDetail.detail}</p>
-        <p>{reviewDetail.review}</p>
-        <p>{reviewDetail.reviewer}</p>
-        <a href={reviewDetail.url}>書籍へのリンク</a>
-      </div>
+  return !reviewDetail.isMine ? (
+    <div className="">
+      <h4>{reviewDetail.title}</h4>
+      <p>{reviewDetail.detail}</p>
+      <p>{reviewDetail.review}</p>
+      <p>{reviewDetail.reviewer}</p>
+      <a href={reviewDetail.url}>書籍へのリンク</a>
+    </div>
+  ) : (
+    <div className="">
+      <h4>{reviewDetail.title}</h4>
+      <p>{reviewDetail.detail}</p>
+      <p>{reviewDetail.review}</p>
+      <p>{reviewDetail.reviewer}</p>
+      <a href={reviewDetail.url}>書籍へのリンク</a>
+      <a href={`/edit/${reviewDetail.id}`}>レビューの編集</a>
+    </div>
   )
 }
 
