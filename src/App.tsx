@@ -1,7 +1,6 @@
 import { ReactElement, useContext } from 'react';
 import logo from './logo.svg';
-import bookLogo from './bookLogo.svg';
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
@@ -14,6 +13,7 @@ import Profile from './Profile';
 import NewReview from './NewReview';
 import ReviewDetail from './ReviewDetail';
 import ReviewEdit from './ReviewEdit';
+import Header from './Header';
 
 function App(): ReactElement {
   return (
@@ -33,14 +33,7 @@ function Main(): ReactElement {
 
   return (
     <>
-    <header className="App-header">
-      <nav className="navbar title">
-        <Link className="navbar-brand d-flex" to="/" >
-          <img src={bookLogo} className="logo my-auto" alt="logo" />
-          <h1 className="h3 text-white my-auto">Book Review</h1>
-        </Link>
-      </nav>
-    </header>
+    <Header />
     <div className="text-center d-flex">
       <SideBar />
       <div className="container" id="main">
