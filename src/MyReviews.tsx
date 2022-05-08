@@ -1,29 +1,31 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState, useContext } from 'react';
+import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
   id: string,
+  isMine?: boolean,
   review: string,
   reviewer: string,
   title: string,
   url: string,
 }
 
-function ReviewIndex (): ReactElement {
-
+function MyReviews (): ReactElement {
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
+
+  const { userToken } = useContext(AuthorizeContext);
 
   async function getReviews(): Promise<void> {
     let listToDisplay: Array<ReviewType>;
-    // テスト投稿のレビューを除外して、レビューを10件取得する
+    // テスト投稿のレビューを除外して、レビューを取得する
     // まずapiから最初の10件を取得
-    const reviewList = (await fetch('https://api-for-missions-and-railways.herokuapp.com/public/books'
-    , {method: 'GET'}
+    const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books`
+    , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
     ).then(res => {
       return res.json();
     })
-    )
     // テスト投稿のレビューを除外する
     listToDisplay = reviewList.filter((review: ReviewType)=>{
       return (
@@ -32,7 +34,9 @@ function ReviewIndex (): ReactElement {
         // 詳細が25文字以上
         review.detail.length > 25 &&
         // レビューが5文字以上
-        review.review.length > 4
+        review.review.length > 4 &&
+        // 自分のレビューかどうか
+        review.isMine
       )
     })
     // 同一の書籍に対するレビューを除外する
@@ -44,11 +48,11 @@ function ReviewIndex (): ReactElement {
       )
     })
     // フィルター後のレビュー数が10に満たない場合、10を超えるまでapiからレビューを取得し続ける
-    // ただし、呼び出しは最大で4回までとする
+    // ただし、api呼び出しは最大で4回までとする
     for (let i=0; i < 4; i ++) {
       if (listToDisplay.length < 10) {
-        const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/public/books?offset=${(i+1)*10}`
-        , {method: 'GET'}
+        const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books?offset=${(i+1)*10}`
+        , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
         ).then(res => {
           return res.json();
         })
@@ -60,7 +64,9 @@ function ReviewIndex (): ReactElement {
             // 詳細が25文字以上
             review.detail.length > 25 &&
             // レビューが5文字以上
-            review.review.length > 4
+            review.review.length > 4 &&
+            // 自分のレビューかどうか
+            review.isMine
           )
         })
         // 同一の書籍に対するレビューを除外する
@@ -86,6 +92,8 @@ function ReviewIndex (): ReactElement {
       }
     }
 
+    console.log(listToDisplay)
+
     setReViews(listToDisplay);
     if (await reviewList) {
       // console.log(await reviewList)
@@ -106,29 +114,25 @@ function ReviewIndex (): ReactElement {
 
   useEffect(()=>{
     getReviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   
   return (
     <>
-      <h2>Review Index</h2>
+      <h2>あなたが投稿したレビュー</h2>
       {reviews!.map(
-        (review: ReviewType, index: number) => (
-          <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
-            <div className="card-header">
-              <h5 className="fw-bold">{review.title}</h5>
-            </div>
-            <div className="card-body">
-              <p className="card-text text-truncate">{review.detail}</p>
-              <p className="card-text text-truncate">{review.review}</p>
-              <p>{review.reviewer}</p>
-              <a className="card-link" href={review.url}>書籍へのリンク</a>
-              <Link className="card-link" to={`/detail/${review.id}`}>詳細</Link>
-            </div>
+        (review: ReviewType, index: number): ReactElement | null =>
+          <div className="border" key={index}>
+            <h4>{review.title}</h4>
+            <p>{review.detail}</p>
+            <p>{review.review}</p>
+            <p>{review.reviewer}</p>
+            <a href={review.url}>書籍へのリンク</a>
+            <Link to={`/detail/${review.id}`}>詳細</Link>
           </div>
-        )
       )}
     </>
   )
 }
 
-export default ReviewIndex;
+export default MyReviews;

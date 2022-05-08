@@ -8,12 +8,12 @@ import ReviewIndex from './ReviewIndex';
 import ReviewIndexAuth from './ReviewIndexAuth';
 import  AuthorizeProvider  from './AuthorizeProvider';
 import { AuthorizeContext } from './AuthorizeProvider';
-import SideBar from './Sidebar';
 import Profile from './Profile';
 import NewReview from './NewReview';
 import ReviewDetail from './ReviewDetail';
 import ReviewEdit from './ReviewEdit';
 import Header from './Header';
+import EditProfile from './EditProfile';
 
 function App(): ReactElement {
   return (
@@ -35,7 +35,7 @@ function Main(): ReactElement {
     <>
     <Header />
     <div className="text-center d-flex">
-      <SideBar />
+      <div id="bg-color">
       <div className="container" id="main">
         <Routes>
           <Route path="/" element={<Home />}/>
@@ -45,10 +45,12 @@ function Main(): ReactElement {
           {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
           <Route path="review-index" element={ !authContext.isAuthorized ? <ReviewIndex /> : <ReviewIndexAuth />}/>
           <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
+          <Route path="profile/edit" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <EditProfile />}/>
           <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
-          <Route path="detail/:bookId" element={<ReviewDetail />}/>
-          <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <ReviewEdit />}/>
+          <Route path="detail/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewDetail />}/>
+          <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewEdit />}/>
         </Routes>
+      </div>
       </div>
     </div>
     </>
