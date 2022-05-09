@@ -215,7 +215,7 @@ a {
 }
 
 #newReviewPage {
-  padding-top: 5rem;
+  padding-top: 6rem;
   height: 100%;
 }
 
@@ -232,4 +232,13 @@ a {
 
 .link-to-profile {
   z-index: 2;
+}
+
+#reviewDetailPage {
+  padding-top: 6rem;
+  height: 100%;
+}
+
+#reviewDetail {
+  background: rgba(1,1,1, 0.7)
 }

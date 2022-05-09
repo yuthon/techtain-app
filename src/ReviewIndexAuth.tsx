@@ -94,6 +94,7 @@ const ReviewIndexAuth = (): ReactElement => {
         </div>
       ) : (
         <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
+          <Link className="card-detailLink" to={`/detail/${review.id}`}></Link> 
           <div className="card-header d-flex justify-content-between">
             <h5 className="fw-bold text-start my-auto">{review.title}</h5>
             <div className="dropdown">

@@ -21,7 +21,7 @@ const ReviewEdit = (): ReactElement => {
   const [resStatus, setResStatus] = useState<number>(200);
 
   const titleRef = useRef<HTMLInputElement>(null!);
-  const detailRef = useRef<HTMLInputElement>(null!);
+  const detailRef = useRef<HTMLTextAreaElement>(null!);
   const urlRef = useRef<HTMLInputElement>(null!);
   const textRef = useRef<HTMLTextAreaElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
@@ -134,17 +134,22 @@ const ReviewEdit = (): ReactElement => {
   })
 
   return (
-    <div>
-      <span className="input-group-text">書籍のタイトル</span>
-      <input className="form-control" aria-label="With textarea" ref={titleRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">あらすじ・詳細</span>
-      <input className="form-control" aria-label="With textarea" ref={detailRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">URL(Amazonへのリンクなど)</span>
-      <input className="form-control" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">レビュー</span>
-      <textarea className="form-control" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
-      <button className="btn btn-primary" onClick={()=>{save()}} ref={btnRef}>保存</button>
-      <button className="btn btn-primary" onClick={()=>{deleteReview()}} ref={deleteBtnRef}>レビューの削除</button>
+    <div className="reviewPage-bg" id="newReviewPage">
+      <div className="container-fuild container-lg" >
+        <span className="input-group-text">書籍のタイトル</span>
+        <input className="form-control mb-3" aria-label="With textarea" ref={titleRef} onChange={()=>{checkInput()}} />
+        <span className="input-group-text">あらすじ・詳細</span>
+        <textarea className="form-control mb-3" id="detail-column" aria-label="With textarea" ref={detailRef} onChange={()=>{checkInput()}} ></textarea>
+        <span className="input-group-text">URL(Amazonへのリンクなど)</span>
+        <input className="form-control mb-3" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
+        <span className="input-group-text">レビュー</span>
+        <textarea className="form-control mb-3" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
+        <div className="d-flex flex-wrap justify-content-between">
+          <button className="btn btn-primary d-grid gap-2 col-6" onClick={()=>{save()}} ref={btnRef}>保存</button>
+          <p className="text-white my-auto">または</p>
+          <button className="btn btn-danger d-grid gap-2 col-3" onClick={()=>{deleteReview()}} ref={deleteBtnRef}>レビューの削除</button>
+        </div>
+      </div>
     </div>
   )
 }
