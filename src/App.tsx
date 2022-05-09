@@ -34,19 +34,19 @@ function Main(): ReactElement {
   return (
     <>
     <Header />
-      <Routes>
-        <Route path="/" element={<Home />}/>
-        <Route path="about" element={<About />}/>
-        <Route path="signup" element={ authContext.isAuthorized ? <Navigate to="/"/> : <SignUp />}/>
-        <Route path="login" element={ authContext.isAuthorized ? <Navigate to="/"/> : <LogIn />}/>
-        {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
-        <Route path="review-index" element={ !authContext.isAuthorized ? <ReviewIndex /> : <ReviewIndexAuth />}/>
-        <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
-        <Route path="profile/edit" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <EditProfile />}/>
-        <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
-        <Route path="detail/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewDetail />}/>
-        <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewEdit />}/>
-      </Routes>
+    <Routes>
+      <Route path="/" element={<Home />}/>
+      <Route path="about" element={<About />}/>
+      <Route path="signup" element={ authContext.isAuthorized ? <Navigate to="/"/> : <SignUp />}/>
+      <Route path="login" element={ authContext.isAuthorized ? <Navigate to="/"/> : <LogIn />}/>
+      {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
+      <Route path="review-index" element={ !authContext.isAuthorized ? <ReviewIndex /> : <ReviewIndexAuth />}/>
+      <Route path="profile" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <Profile />}/>
+      <Route path="profile/edit" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <EditProfile />}/>
+      <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/"/> : <NewReview />}/>
+      <Route path="detail/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewDetail />}/>
+      <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewEdit />}/>
+    </Routes>
     </>
   )
 }
