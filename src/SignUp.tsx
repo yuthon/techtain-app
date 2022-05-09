@@ -117,7 +117,7 @@ function SignUp(): ReactElement {
   
   return (
     <>
-      <div id="signupPage-bg">
+      <div className="signupPage-bg">
         <div className="container-fuild container-lg" id="signupPage-content">
           <div className="row">
             <div className="col-md-6" id="welcomeMessage">
