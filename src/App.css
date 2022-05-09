@@ -1,6 +1,6 @@
 .App {
-  background-image: url(./background_4.jpg);
-  background-size: contain;
+  /* background-image: url(./background_4.jpg); */
+  /* background-size: contain; */
 }
 
 #bg-color {
@@ -24,7 +24,7 @@ a {
 }
 
 .App-header {
-  background-color: #282c34;
+  /* background-color: #282c34; */
   /* height: 4.5rem; */
   /* display: flex; */
   /* flex-direction: column; */
@@ -110,9 +110,17 @@ a {
   right: 0px;
 } */
 
-/* .review-card {
-  width: 35rem;
-} */
+.review-card {
+  /* width: 35rem; */
+  cursor: pointer;
+  /* transition: all 0.5s ease 0s; */
+}
+
+.review-card:hover {
+  /* width: 35rem; */
+  /* transform: translateY(-3px); */
+  /* transition: .1s; */
+}
 
 #btn-loadmore {
   background: white;
@@ -120,4 +128,40 @@ a {
 
 #btn-loadmore:hover {
   background: rgba(255, 255, 255, 0.61);
+}
+
+.ellipsis {
+  height: 35px;
+  width: 35px;
+}
+
+.ellipsis:hover path{
+  stroke: blue;
+}
+
+.ellipsis-btn {
+  background: none;
+  border: none;
+  color: transparent;
+  padding: 0;
+  width: 30px;
+} 
+
+.circle-icon {
+  width: 30px;
+  height: 30px;
+}
+
+
+
+.circle-icon:hover path {
+  fill: #898b8d;
+}
+
+.username-link {
+  color: black;
+}
+
+.username-link:hover {
+  text-decoration: underline;
 }
