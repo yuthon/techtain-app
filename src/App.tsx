@@ -35,7 +35,6 @@ function Main(): ReactElement {
     <>
     <Header />
     <div className="text-center d-flex">
-      <div id="bg-color">
       <div className="container" id="main">
         <Routes>
           <Route path="/" element={<Home />}/>
@@ -50,7 +49,6 @@ function Main(): ReactElement {
           <Route path="detail/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewDetail />}/>
           <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewEdit />}/>
         </Routes>
-      </div>
       </div>
     </div>
     </>

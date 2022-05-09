@@ -1,12 +1,7 @@
 .App {
-  /* background-image: url(./background_4.jpg); */
-  /* background-size: contain; */
-}
-
-#bg-color {
-  width: 100%;
   background: rgba(1,1,1, 0.2);
 }
+
 
 a {
   text-decoration: none;
