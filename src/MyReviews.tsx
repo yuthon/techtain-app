@@ -1,5 +1,6 @@
-import { ReactElement, useContext, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
+import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
@@ -11,7 +12,7 @@ type ReviewType = {
   url: string,
 }
 
-function MyReviewIndex (): ReactElement {
+function MyReviews (): ReactElement {
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
 
   const { userToken } = useContext(AuthorizeContext);
@@ -33,7 +34,9 @@ function MyReviewIndex (): ReactElement {
         // 詳細が25文字以上
         review.detail.length > 25 &&
         // レビューが5文字以上
-        review.review.length > 4
+        review.review.length > 4 &&
+        // 自分のレビューかどうか
+        review.isMine
       )
     })
     // 同一の書籍に対するレビューを除外する
@@ -61,7 +64,9 @@ function MyReviewIndex (): ReactElement {
             // 詳細が25文字以上
             review.detail.length > 25 &&
             // レビューが5文字以上
-            review.review.length > 4
+            review.review.length > 4 &&
+            // 自分のレビューかどうか
+            review.isMine
           )
         })
         // 同一の書籍に対するレビューを除外する
@@ -107,8 +112,6 @@ function MyReviewIndex (): ReactElement {
     }
   }
 
-
-
   useEffect(()=>{
     getReviews();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,21 +119,20 @@ function MyReviewIndex (): ReactElement {
   
   return (
     <>
-      <h2>Review Index</h2>
+      <h2>あなたが投稿したレビュー</h2>
       {reviews!.map(
-        (review: ReviewType, index: number) => (
+        (review: ReviewType, index: number): ReactElement | null =>
           <div className="border" key={index}>
             <h4>{review.title}</h4>
             <p>{review.detail}</p>
             <p>{review.review}</p>
             <p>{review.reviewer}</p>
             <a href={review.url}>書籍へのリンク</a>
-            <a href={`detail/${review.id}`}>詳細</a>
+            <Link to={`/detail/${review.id}`}>詳細</Link>
           </div>
-        )
       )}
     </>
   )
 }
 
-export default MyReviewIndex;
+export default MyReviews;

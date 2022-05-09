@@ -48,9 +48,6 @@ function SideBar(): ReactElement {
           <Link to="/review-index">レビュー一覧</Link>
         </nav>
         <nav>
-          <Link to="/myreview-index">あなたのレビュー一覧</Link>
-        </nav>
-        <nav>
           <Link to="/new">レビュー作成</Link>
         </nav>
         <nav>

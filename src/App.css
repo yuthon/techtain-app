@@ -1,6 +1,7 @@
-/* .App {
-  text-align: center;
-} */
+.App {
+  background: rgba(1,1,1, 0.2);
+}
+
 
 a {
   text-decoration: none;
@@ -18,14 +19,14 @@ a {
 }
 
 .App-header {
-  background-color: #282c34;
-  height: 4.5rem;
+  /* background-color: #282c34; */
+  /* height: 4.5rem; */
+  /* display: flex; */
   /* flex-direction: column; */
-  align-items: center;
-  justify-content: center;
+  /* align-items: center;
+  justify-content: center; */
   /* font-size: calc(10px + 2vmin); */
   color: white;
-  padding-top: 5px;
 }
 
 /* .App-header h1 {
@@ -71,6 +72,7 @@ a {
   width: calc(100vw - 256px);
   position: relative;
   padding-top: 4rem;
+
 }
 
 #top-banner {
@@ -84,4 +86,77 @@ a {
 
 #review-column {
   height: 200px;
+}
+
+.userIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.userName {
+  font-size: 1.35rem;
+  color: white;
+  margin-left: 5px;
+}
+
+/* .menu {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+} */
+
+.review-card {
+  /* width: 35rem; */
+  cursor: pointer;
+  /* transition: all 0.5s ease 0s; */
+}
+
+.review-card:hover {
+  /* width: 35rem; */
+  /* transform: translateY(-3px); */
+  /* transition: .1s; */
+}
+
+#btn-loadmore {
+  background: white;
+}
+
+#btn-loadmore:hover {
+  background: rgba(255, 255, 255, 0.61);
+}
+
+.ellipsis {
+  height: 35px;
+  width: 35px;
+}
+
+.ellipsis:hover path{
+  stroke: blue;
+}
+
+.ellipsis-btn {
+  background: none;
+  border: none;
+  color: transparent;
+  padding: 0;
+  width: 30px;
+} 
+
+.circle-icon {
+  width: 30px;
+  height: 30px;
+}
+
+
+
+.circle-icon:hover path {
+  fill: #898b8d;
+}
+
+.username-link {
+  color: black;
+}
+
+.username-link:hover {
+  text-decoration: underline;
 }

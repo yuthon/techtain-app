@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 
 type ReviewType = {
   detail: string,
@@ -9,8 +10,8 @@ type ReviewType = {
   url: string,
 }
 
-
 function ReviewIndex (): ReactElement {
+
   const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
 
   async function getReviews(): Promise<void> {
@@ -112,13 +113,17 @@ function ReviewIndex (): ReactElement {
       <h2>Review Index</h2>
       {reviews!.map(
         (review: ReviewType, index: number) => (
-          <div className="border" key={index}>
-            <h4>{review.title}</h4>
-            <p>{review.detail}</p>
-            <p>{review.review}</p>
-            <p>{review.reviewer}</p>
-            <a href={review.url}>書籍へのリンク</a>
-            <a href={`/detail/${review.id}`}>詳細</a>
+          <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
+            <div className="card-header">
+              <h5 className="fw-bold">{review.title}</h5>
+            </div>
+            <div className="card-body">
+              <p className="card-text text-truncate">{review.detail}</p>
+              <p className="card-text text-truncate">{review.review}</p>
+              <p>{review.reviewer}</p>
+              <a className="card-link" href={review.url}>書籍へのリンク</a>
+              <Link className="card-link" to={`/detail/${review.id}`}>詳細</Link>
+            </div>
           </div>
         )
       )}
