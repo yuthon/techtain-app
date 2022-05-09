@@ -1,4 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
+import { Link } from "react-router-dom";
+import bookLogo from './bookLogo.svg';
 
 type UserInputType = {
   name: string,
@@ -115,29 +117,45 @@ function SignUp(): ReactElement {
   
   return (
     <>
-      <h2>Sign Up Page</h2>
-      <div className="form" id="signup-form">
-        <div className="mb-3">
-          <label className="form-label">Name</label>
-          <input type="name" className="form-control" aria-describedby="emailHelp" ref={nameRef} onChange={()=>{checkInput()}}/>
+      <div id="signupPage-bg">
+        <div className="container-fuild container-lg" id="signupPage-content">
+          <div className="row">
+            <div className="col-md-6" id="welcomeMessage">
+              <div className="d-flex flex-wrap">
+                <div className="d-flex flex-nowrap">
+                  <img src={bookLogo} className="signupPage-logo" alt="logo" />
+                  <h1 className="text-start text-white">Book Review</h1>
+                </div>
+                <h1 className="text-start text-white ms-2">へようこそ！</h1>
+              </div>
+              <h2 className="text-start text-white mt-5">会員登録してレビューにアクセスしてみましょう！</h2>
+            </div>
+            <div className="form col-md-6" id="signupForm">
+              <div className="mb-3">
+                <input type="name" className="form-control" aria-describedby="emailHelp" ref={nameRef} onChange={()=>{checkInput()}} placeholder="ユーザー名" />
+              </div>
+              <div className="mb-3">
+                <input type="email" className="form-control" aria-describedby="emailHelp" ref={emailRef} onChange={()=>{checkInput()}} placeholder="Eメール" />
+              </div>
+              <div className="mb-3">
+                <input type="password" className="form-control" ref={passwordRef} onChange={()=>{checkInput()}} placeholder="パスワード" />
+                {passwordWarning!}
+              </div>
+              <div className="mb-3">
+                <input type="password" className="form-control" ref={confirmRef} onChange={()=>{checkInput()}} placeholder="パスワード（確認用）"/>
+                {passwordWarning!}
+              </div>
+              <div className="d-flex flex-wrap justify-content-between" id="signupOrLogin">
+                <button className="btn btn-primary" id="btn-register" onClick={()=>{signup()}} ref={submitRef}>登録</button>
+                <p className="my-auto">または</p>
+                <Link className="text-reset" to="/login">
+                  <p id="link-login">ログイン</p>
+                </Link>
+              </div>
+              {ErrorAlert!}
+            </div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Email address</label>
-          <input type="email" className="form-control" aria-describedby="emailHelp" ref={emailRef} onChange={()=>{checkInput()}}/>
-          <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input type="password" className="form-control" ref={passwordRef} onChange={()=>{checkInput()}}/>
-          {passwordWarning!}
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Comfirm Password</label>
-          <input type="password" className="form-control" ref={confirmRef} onChange={()=>{checkInput()}}/>
-          {passwordWarning!}
-        </div>
-        <button className="btn btn-primary" onClick={()=>{signup()}} ref={submitRef}>登録</button>
-        {ErrorAlert!}
       </div>
     </>
   )

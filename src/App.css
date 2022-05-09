@@ -1,5 +1,6 @@
 .App {
   background: rgba(1,1,1, 0.2);
+  height: 100vh;
 }
 
 
@@ -68,12 +69,12 @@ a {
   background: #282c34;
 }
 
-#main {
+/* #main {
   width: calc(100vw - 256px);
   position: relative;
   padding-top: 4rem;
 
-}
+} */
 
 #top-banner {
   height: 4rem;
@@ -159,4 +160,46 @@ a {
 
 .username-link:hover {
   text-decoration: underline;
+}
+
+#signupOrLogin {
+  width: 100%;
+}
+
+#btn-register {
+  width: 65%;
+}
+
+#link-login {
+  font-size: 1.25rem;
+  margin: 0.5rem 0 0.5rem 0rem;
+  font-weight: bold;
+  color: rgb(121, 119, 119);
+}
+
+#link-login:hover {
+  text-decoration: underline;
+}
+
+#signupPage-bg {
+  height: calc(100vh - 3.75rem);
+  background-image: url(./signup-background.png);
+  background-size: cover;
+}
+
+#signupPage-content {
+  padding-top: 10vh;
+}
+
+.signupPage-logo {
+  width: 2rem;
+  margin-right: 8px;
+  margin-bottom: 0.5rem;
+}
+
+#signupForm {
+  border: 2px solid rgba(207, 207, 207, 0.2);
+  border-radius: 8px;
+  background: white;
+  padding: 20px;
 }
