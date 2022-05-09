@@ -1,6 +1,7 @@
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import bookLogo from './bookLogo.svg';
+import { AuthorizeContext } from './AuthorizeProvider';
 
 type UserInputType = {
   name: string,
@@ -24,6 +25,9 @@ function SignUp(): ReactElement {
 
   let passwordWarning: ReactElement;
   let ErrorAlert: ReactElement;
+
+  // 認証コンテキストを使用
+  const authContext = useContext(AuthorizeContext);
 
   const checkInput = (): void => {
     // ユーザーの入力をstateに反映
@@ -72,7 +76,9 @@ function SignUp(): ReactElement {
     )
     if (await url.token) {
       setSubmitError(false);
-      console.log(await url.token)
+      localStorage.setItem('v_|2Q)iA~*rn%', url.token);
+      authContext.setUserToken(url.token);
+      authContext.setIsAuthorized(true);
     } else {
       if (await url.ErrorCode) {
         if (await url.ErrorCode === 400) {
