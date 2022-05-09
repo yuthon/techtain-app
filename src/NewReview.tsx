@@ -17,7 +17,7 @@ const NewReview = ():ReactElement => {
   const [resStatus, setResStatus] = useState<number>(200);
 
   const titleRef = useRef<HTMLInputElement>(null!);
-  const detailRef = useRef<HTMLInputElement>(null!);
+  const detailRef = useRef<HTMLTextAreaElement>(null!);
   const urlRef = useRef<HTMLInputElement>(null!);
   const textRef = useRef<HTMLTextAreaElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
@@ -97,16 +97,20 @@ const NewReview = ():ReactElement => {
   })
 
   return (
-    <div>
-      <span className="input-group-text">書籍のタイトル</span>
-      <input className="form-control" aria-label="With textarea" ref={titleRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">あらすじ・詳細</span>
-      <input className="form-control" aria-label="With textarea" ref={detailRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">URL(Amazonへのリンクなど)</span>
-      <input className="form-control" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
-      <span className="input-group-text">レビュー</span>
-      <textarea className="form-control" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
-      <button className="btn btn-primary" onClick={()=>{submit()}} ref={btnRef}>レビューを投稿</button>
+    <div className="reviewPage-bg" id="newReviewPage">
+      <div className="container-fuild container-lg" >
+        <span className="input-group-text">書籍のタイトル</span>
+        <input className="form-control mb-3" aria-label="With textarea" ref={titleRef} onChange={()=>{checkInput()}} />
+        <span className="input-group-text">あらすじ・詳細</span>
+        <textarea className="form-control mb-3" id="detail-column" aria-label="With textarea" ref={detailRef} onChange={()=>{checkInput()}} ></textarea>
+        <span className="input-group-text">URL(Amazonへのリンクなど)</span>
+        <input className="form-control mb-3" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
+        <span className="input-group-text">レビュー</span>
+        <textarea className="form-control" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
+        <div className="d-grid gap-2 col-2 mx-auto mt-3">
+          <button className="btn btn-primary" onClick={()=>{submit()}} ref={btnRef}>レビューを投稿</button>
+        </div>
+      </div>
     </div>
   )
 }

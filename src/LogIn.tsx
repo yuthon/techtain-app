@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
+import { Link } from "react-router-dom";
 
 type LoginInputType = {
   email: string,
@@ -113,19 +114,26 @@ function LogIn(): ReactElement {
 
   return (
     <>
-      <h2>Log In Page</h2>
-      <div className="form" id="signup-form">
-        <div className="mb-3">
-          <label className="form-label">Email address</label>
-          <input type="email" className="form-control" aria-describedby="emailHelp" ref={emailRef} onChange={()=>{checkInput()}}/>
+      <div className="signupPage-bg" id="loginPage">
+        <div className="container-fuild container-lg">
+          <div className="form" id="login-form">
+            <div className="mb-3">
+              <input type="email" className="form-control" aria-describedby="emailHelp" ref={emailRef} onChange={()=>{checkInput()}} placeholder="Eメール"/>
+            </div>
+            <div className="mb-3">
+              <input type="password" className="form-control" ref={passwordRef} onChange={()=>{checkInput()}} placeholder="パスワード"/>
+              {passwordWarning!}
+            </div>
+            <div className="d-flex flex-wrap justify-content-between" id="signupOrLogin">
+              <button className="btn btn-primary" id="btn-register" onClick={()=>{login()}} ref={loginRef}>ログイン</button>
+              <p className="my-auto">または</p>
+              <Link className="text-reset" to="/signup">
+                <p id="link-login">登録</p>
+              </Link>
+            </div>
+            {ErrorAlert!}
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input type="password" className="form-control" ref={passwordRef} onChange={()=>{checkInput()}}/>
-          {passwordWarning!}
-        </div>
-        <button className="btn btn-primary" onClick={()=>{login()}} ref={loginRef}>ログイン</button>
-        {ErrorAlert!}
       </div>
     </>
   )

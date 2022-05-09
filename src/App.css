@@ -1,5 +1,6 @@
 .App {
   background: rgba(1,1,1, 0.2);
+  height: 100vh;
 }
 
 
@@ -68,13 +69,6 @@ a {
   background: #282c34;
 }
 
-#main {
-  width: calc(100vw - 256px);
-  position: relative;
-  padding-top: 4rem;
-
-}
-
 #top-banner {
   height: 4rem;
   background: #282c34;;
@@ -109,12 +103,8 @@ a {
   /* width: 35rem; */
   cursor: pointer;
   /* transition: all 0.5s ease 0s; */
-}
-
-.review-card:hover {
-  /* width: 35rem; */
-  /* transform: translateY(-3px); */
-  /* transition: .1s; */
+  position: relative;
+  height: 12.25rem;
 }
 
 #btn-loadmore {
@@ -143,8 +133,8 @@ a {
 } 
 
 .circle-icon {
-  width: 30px;
-  height: 30px;
+  width: 2rem;
+  height: 2rem;
 }
 
 
@@ -159,4 +149,87 @@ a {
 
 .username-link:hover {
   text-decoration: underline;
+}
+
+#signupOrLogin {
+  width: 100%;
+}
+
+#btn-register {
+  width: 65%;
+}
+
+#link-login {
+  font-size: 1.25rem;
+  margin: 0.5rem 0 0.5rem 0rem;
+  font-weight: bold;
+  color: rgb(121, 119, 119);
+}
+
+#link-login:hover {
+  text-decoration: underline;
+}
+
+.signupPage-bg {
+  height: calc(100vh - 3.75rem);
+  background-image: url(./bg_6.jpg);
+  background-size: cover;
+}
+
+.reviewPage-bg {
+  background-image: url(./bg_5.jpg);
+  background-size: cover;
+  background-attachment: fixed
+}
+
+#signupPage-content {
+  padding-top: 10vh;
+}
+
+.signupPage-logo {
+  width: 2rem;
+  margin-right: 8px;
+  margin-bottom: 0.5rem;
+}
+
+#signupForm {
+  border: 2px solid rgba(207, 207, 207, 0.2);
+  border-radius: 8px;
+  background: white;
+  padding: 20px;
+}
+
+#login-form {
+  border: 2px solid rgba(207, 207, 207, 0.2);
+  border-radius: 8px;
+  background: white;
+  padding: 20px;
+}
+
+#loginPage {
+  padding-top: 15vh;
+}
+
+#reviewPage {
+  padding-top: 5rem;
+}
+
+#newReviewPage {
+  padding-top: 5rem;
+  height: 100%;
+}
+
+.card-detailLink {
+  height: 12.25rem;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.review-dropdown {
+  z-index: 2;
+}
+
+.link-to-profile {
+  z-index: 2;
 }
