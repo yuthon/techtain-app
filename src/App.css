@@ -214,6 +214,11 @@ a {
   padding-top: 5rem;
 }
 
+#newReviewPage {
+  padding-top: 5rem;
+  height: 100%;
+}
+
 .card-detailLink {
   height: 12.25rem;
   width: 100%;
