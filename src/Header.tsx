@@ -45,7 +45,7 @@ const Header = (): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
-                  <Link to="/review-index">レビュー一覧</Link>
+                  <Link to="/">レビュー一覧</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
                   <Link to="/new">レビュー投稿</Link>
@@ -79,9 +79,6 @@ const Header = (): ReactElement => {
             </button>
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li className="nav-item my-auto mx-3">
-                  <Link to="/review-index">レビュー一覧</Link>
-                </li>
                 <li className="nav-item my-auto mx-3">
                   <Link to="/signup">登録</Link>
                 </li>
