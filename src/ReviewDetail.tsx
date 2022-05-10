@@ -46,7 +46,7 @@ const ReviewDetail = ():ReactElement => {
         }
       }
     }
-  }
+  };
 
   useEffect(()=>{
     getDetail();

@@ -9,6 +9,16 @@ type UserInputType = {
   text: string
 }
 
+type detailType = {
+  id: string,
+  title: string,
+  url: string,
+  detail: string,
+  review: string,
+  reviewer: string,
+  isMine: boolean
+}
+
 const ReviewEdit = (): ReactElement => {
 
   const { userToken } = useContext(AuthorizeContext);
@@ -19,6 +29,9 @@ const ReviewEdit = (): ReactElement => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<boolean>(false);
   const [resStatus, setResStatus] = useState<number>(200);
+  const [reviewDetail, setReviewDetail] = useState<detailType>({
+    id:'',title:'',url:'',detail:'',review:'',reviewer:'',isMine:false
+  });
 
   const titleRef = useRef<HTMLInputElement>(null!);
   const detailRef = useRef<HTMLTextAreaElement>(null!);
@@ -67,6 +80,31 @@ const ReviewEdit = (): ReactElement => {
       }
     }
   };
+
+  async function getDetail() {
+    const review = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`
+    , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
+    ).then(res => {
+      return res.json();
+    })
+    
+    setReviewDetail(review);
+    if (await review) {
+      // console.log(await reviewList)
+    } else {
+      if (await review.ErrorCode) {
+        if (await review.ErrorCode === 400) {
+          console.log(await review.ErrorMessageJP)
+        }
+        else if (await review.ErrorCode === 401) {
+          console.log(await review.ErrorMessageJP)
+        }
+        else if (await review.ErrorCode === 500) {
+          console.log(await review.ErrorMessageJP)
+        }
+      }
+    }
+  }
 
   async function deleteReview(): Promise<void> {
     const review = await fetch(
@@ -125,6 +163,18 @@ const ReviewEdit = (): ReactElement => {
   };
 
   useEffect(()=>{
+    getDetail();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+
+  useEffect(()=>{
+    titleRef.current.value = reviewDetail.title;
+    detailRef.current.value = reviewDetail.detail;
+    urlRef.current.value = reviewDetail.url;
+    textRef.current.value = reviewDetail.review;
+  },[reviewDetail])
+
+  useEffect(()=>{
     // フォームが必要な条件を満たすならボタンを有効化
     if (isFormValid) {
       btnRef.current.disabled = false
@@ -137,17 +187,53 @@ const ReviewEdit = (): ReactElement => {
     <div className="reviewPage-bg" id="newReviewPage">
       <div className="container-fuild container-lg" >
         <span className="input-group-text">書籍のタイトル</span>
-        <input className="form-control mb-3" aria-label="With textarea" ref={titleRef} onChange={()=>{checkInput()}} />
+        <input
+          className="form-control mb-3"
+          aria-label="With textarea"
+          ref={titleRef}
+          onChange={()=>{checkInput()}}
+        />
         <span className="input-group-text">あらすじ・詳細</span>
-        <textarea className="form-control mb-3" id="detail-column" aria-label="With textarea" ref={detailRef} onChange={()=>{checkInput()}} ></textarea>
+        <textarea
+          className="form-control mb-3"
+          id="detail-column"
+          aria-label="With textarea"
+          ref={detailRef}
+          onChange={()=>{checkInput()}}
+        >
+        </textarea>
         <span className="input-group-text">URL(Amazonへのリンクなど)</span>
-        <input className="form-control mb-3" aria-label="With textarea" ref={urlRef} onChange={()=>{checkInput()}} />
+        <input
+          className="form-control mb-3"
+          aria-label="With textarea"
+          ref={urlRef}
+          onChange={()=>{checkInput()}}
+        />
         <span className="input-group-text">レビュー</span>
-        <textarea className="form-control mb-3" id="review-column" aria-label="With textarea" ref={textRef} onChange={()=>{checkInput()}} ></textarea>
+        <textarea
+          className="form-control mb-3"
+          id="review-column"
+          aria-label="With textarea"
+          ref={textRef}
+          onChange={()=>{checkInput()}}
+        >
+        </textarea>
         <div className="d-flex flex-wrap justify-content-between">
-          <button className="btn btn-primary d-grid gap-2 col-6" onClick={()=>{save()}} ref={btnRef}>保存</button>
+          <button
+            className="btn btn-primary d-grid gap-2 col-6"
+            onClick={()=>{save()}}
+            ref={btnRef}
+          >
+            保存
+          </button>
           <p className="text-white my-auto">または</p>
-          <button className="btn btn-danger d-grid gap-2 col-3" onClick={()=>{deleteReview()}} ref={deleteBtnRef}>レビューの削除</button>
+          <button
+            className="btn btn-danger d-grid gap-2 col-3"
+            onClick={()=>{deleteReview()}}
+            ref={deleteBtnRef}
+          >
+            レビューの削除
+          </button>
         </div>
       </div>
     </div>

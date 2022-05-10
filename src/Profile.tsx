@@ -1,13 +1,13 @@
-import { ReactElement, useEffect, useState, useContext, useRef } from 'react';
+import { FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import MyReviews from './MyReviews';
 
-type userDataType = {
-  name: string
+type ProfileProps = {
+  userName: string | null;
+  setUserName: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-function Profile (): ReactElement {
-  const [userName, setUserName] = useState<string>('')
+const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const [userInput, setUserInput] = useState<string>('');
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
@@ -17,20 +17,11 @@ function Profile (): ReactElement {
   const nameRef = useRef<HTMLInputElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
 
-  // 認証トークンを利用してユーザ情報を取得
-  async function getUser(): Promise<void> {
-    const userInfo: userDataType = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
-    {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
-    ).then(res => {
-      return res.json();
-    })
-    setUserName(userInfo.name)
-  };
-
   async function update(): Promise<void> {
     const url = await fetch("https://api-for-missions-and-railways.herokuapp.com/users"
     , {method: 'PUT', headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),body: JSON.stringify({"name": userInput})}
     ).then(res => {
+      setUserName(userInput);
       return res.json();
     })
     if (await url.token) {
@@ -51,12 +42,11 @@ function Profile (): ReactElement {
 
   let ErrorAlert: ReactElement;
 
-  useEffect(()=>{
-    getUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  useEffect(() => {
+    nameRef.current.value = userName!;
+  },[userName])
 
-  useEffect(()=>{
+  useEffect(() => {
     // フォームが必要な条件を満たすならボタンを有効化
     if (isFormValid) {
       btnRef.current.disabled = false

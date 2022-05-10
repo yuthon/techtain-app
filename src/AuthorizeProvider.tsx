@@ -1,8 +1,8 @@
 import { FC, ReactElement, createContext, useState } from 'react';
 
 type AuthorizeContextType = {
-  userToken: string,
-  setUserToken: React.Dispatch<React.SetStateAction<string>>,
+  userToken: string | null,
+  setUserToken: React.Dispatch<React.SetStateAction<string | null>>,
   isAuthorized: boolean,
   setIsAuthorized: React.Dispatch<React.SetStateAction<boolean>>,
 }
@@ -13,17 +13,18 @@ type AuthorizeContextProps = {
 
 export const AuthorizeContext = createContext<AuthorizeContextType>(null!);
 
-const AuthorizeProvider: FC<AuthorizeContextProps> = ({ children }): any => {
-  let token;
-  let auth;
-  if (localStorage.getItem('v_|2Q)iA~*rn%')) {
-    token = localStorage.getItem('v_|2Q)iA~*rn%');
+const AuthorizeProvider: FC<AuthorizeContextProps> = ({ children }): ReactElement => {
+  let auth: boolean;
+  let token: string | null = localStorage.getItem('v_|2Q)iA~*rn%');
+
+  if (token) {
     auth = true;
+  } else {
+    auth = false;
   }
   
-
-  const [userToken, setUserToken] = useState(token || '');
-  const [isAuthorized, setIsAuthorized] = useState(auth || false);
+  const [userToken, setUserToken] = useState<string | null>(token);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(auth);
 
   const provider = {
     userToken,
@@ -31,6 +32,7 @@ const AuthorizeProvider: FC<AuthorizeContextProps> = ({ children }): any => {
     isAuthorized,
     setIsAuthorized,
   }
+  
   return (
     <AuthorizeContext.Provider value={provider}>
       {children}

@@ -281,3 +281,7 @@ a {
 #header-userLink:hover {
   background: rgba(255, 255, 255, 0.35);
 }
+
+#detail-column{
+  height: 6rem;
+}
