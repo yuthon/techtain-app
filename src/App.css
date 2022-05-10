@@ -215,7 +215,7 @@ a {
 }
 
 #newReviewPage {
-  padding-top: 5rem;
+  padding-top: 6rem;
   height: 100%;
 }
 
@@ -232,4 +232,52 @@ a {
 
 .link-to-profile {
   z-index: 2;
+}
+
+#reviewDetailPage {
+  padding-top: 6rem;
+  height: 100%;
+}
+
+#reviewDetail {
+  background: rgba(1,1,1, 0.7)
+}
+
+#profilePage {
+  padding-top: 6rem;
+  height: 100%;
+}
+
+
+
+.profile-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.profile-username {
+  font-size: 1.5rem;
+}
+
+#btn-profile-edit {
+  font-weight: bold;
+}
+
+.header-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.header-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+#header-userLink {
+
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+#header-userLink:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
