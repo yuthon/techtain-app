@@ -52,36 +52,37 @@ function LogIn(): ReactElement {
       "password": userInput.password,
     }
 
-    const url = await fetch("https://api-for-missions-and-railways.herokuapp.com/signin"
+    const response = await fetch("https://api-for-missions-and-railways.herokuapp.com/signin"
     , {method: 'POST', body: JSON.stringify(userInfo)}
     ).then(res => {
-      return res.json();
+      if (res.ok) {
+        setLoginError(false);
+        setResStatus(200);
+        return res.json();
+      }
+      else {
+        setLoginError(true);
+        return res.json();
+      }
     })
-    if (await url.token) {
-      setResStatus(200);
-      setLoginError(false);
-      console.log(await url.token);
+    
+    if (await response.token) {
       // 認証トークンをローカルストレージに保存
-      // 指定された認証APIを使うには返される認証トークンをlocalStrageに保存するしかないと思われるが、これはあらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく。
-      // アクセスした人物が他のサイトでtokenという項目名の値をlocalStrageに与えられている可能性もあるのでその対策にもなり得る？
-      // もっと強いセキュリティを持つ方法も検討したい
-      localStorage.setItem('v_|2Q)iA~*rn%', url.token);
-      authContext.setUserToken(url.token);
+      // あらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく
+      localStorage.setItem('v_|2Q)iA~*rn%', response.token);
+      authContext.setUserToken(response.token);
       authContext.setIsAuthorized(true);
     } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
+      if (await response.ErrorCode) {
+        if (await response.ErrorCode === 400) {
           setResStatus(400);
           setLoginError(true);
         }
-        else if (await url.ErrorCode === 403) {
-          console.log(await url.ErrorMessageJP)
+        else if (await response.ErrorCode === 403) {
           setResStatus(403);
           setLoginError(true);
         }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
+        else if (await response.ErrorCode === 500) {
           setResStatus(500);
           setLoginError(true);
         }
@@ -93,12 +94,12 @@ function LogIn(): ReactElement {
   if (loginError) {
     if (resStatus === 403) {
       ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger" role="alert">パスワードが正しくありません</div>
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">メールアドレスかパスワードが正しくありません</div>
       )
     }
     else if (resStatus === 400 || resStatus === 500) {
       ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger" role="alert">エラーが起きました。もう一度お試しください</div>
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
       )
     }
   }
@@ -139,4 +140,4 @@ function LogIn(): ReactElement {
   )
 }
 
-export default LogIn
+export default LogIn;

@@ -29,14 +29,21 @@ function Main(): ReactElement {
   const authContext = useContext(AuthorizeContext);
 
   const [userName, setUserName] = useState<string | null>(null);
+  const [isError, setIsError] = useState<boolean>(false);
 
   // 認証トークンを利用してユーザ情報を取得
   async function getUser(): Promise<void> {
     const userInfo: {name: string} = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
     {headers: new Headers({ 'Authorization': `Bearer ${authContext.userToken}`})}
     ).then(res => {
-      return res.json();
-    })
+      if (res.ok) {
+        setIsError(false);
+        return res.json();
+      }
+      else {
+        setIsError(true);
+      }
+    });
     setUserName(userInfo.name);
   };
 
@@ -45,7 +52,20 @@ function Main(): ReactElement {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  return (
+  let ErrorAlert: ReactElement = (
+    <div className="alert alert-warning mt-5" role="alert">
+      エラーが起きました。しばらくしてからもう一度お試しください。
+    </div>
+  )
+
+  return isError ? (
+    <>
+    <Header userName={userName} />
+    <div className="container pt-5">
+      {ErrorAlert}
+    </div>
+    </>
+  ) : (
     <>
     <Header userName={userName} />
     <Routes>
