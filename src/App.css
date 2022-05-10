@@ -262,3 +262,22 @@ a {
 #btn-profile-edit {
   font-weight: bold;
 }
+
+.header-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.header-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+#header-userLink {
+
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+#header-userLink:hover {
+  background: rgba(255, 255, 255, 0.35);
+}

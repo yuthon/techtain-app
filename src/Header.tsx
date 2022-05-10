@@ -45,18 +45,20 @@ const Header = (): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
-                  <Link to="/">レビュー一覧</Link>
+                  <Link className="header-link" to="/">レビュー一覧</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link to="/new">レビュー投稿</Link>
+                  <Link className="header-link" to="/new">レビュー投稿</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link onClick={()=>{logOut()}} to="/login">ログアウト</Link>
+                  <Link className="header-link" onClick={()=>{logOut()}} to="/login">ログアウト</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="d-flex" to="/profile" >
-                    <img src={userIcon} className="userIcon my-auto" alt="logo" />
-                    <span className="userName">{userName}</span>
+                  <Link to="/profile" >
+                    <div className="d-flex flex-nowrap" id="header-userLink">
+                      <img src={userIcon} className="userIcon my-auto" alt="logo" />
+                      <span className="userName">{userName}</span>
+                    </div>
                   </Link>
                 </li>
               </ul>
