@@ -242,3 +242,23 @@ a {
 #reviewDetail {
   background: rgba(1,1,1, 0.7)
 }
+
+#profilePage {
+  padding-top: 6rem;
+  height: 100%;
+}
+
+
+
+.profile-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.profile-username {
+  font-size: 1.5rem;
+}
+
+#btn-profile-edit {
+  font-weight: bold;
+}
