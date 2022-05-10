@@ -78,8 +78,8 @@ const ReviewDetail = ():ReactElement => {
             </div>
           </div>
           <div className="card-body">
-            <p className="card-text text-truncate text-start">{reviewDetail.detail}</p>
-            <p className="card-text text-truncate text-start">{reviewDetail.review}</p>
+            <p className="card-text text-start">{reviewDetail.detail}</p>
+            <p className="card-text text-start">{reviewDetail.review}</p>
             <div className="d-flex link-to-profile">
               <Link className="d-flex link-to-profile" to="/profile" >
                 <svg className="circle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -122,8 +122,8 @@ const ReviewDetail = ():ReactElement => {
             </div>
           </div>
           <div className="card-body">
-            <p className="card-text text-truncate text-start">{reviewDetail.detail}</p>
-            <p className="card-text text-truncate text-start">{reviewDetail.review}</p>
+            <p className="card-text text-start">{reviewDetail.detail}</p>
+            <p className="card-text text-start">{reviewDetail.review}</p>
             <div className="d-flex">
               <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               {/* <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --> */}
