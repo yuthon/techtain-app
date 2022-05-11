@@ -48,7 +48,7 @@ const Main = (): ReactElement => {
     <div className="alert alert-warning mt-5" role="alert">
       エラーが起きました。しばらくしてからもう一度お試しください
     </div>
-  )
+  );
 
   return isError ? (
     <>
