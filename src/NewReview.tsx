@@ -1,6 +1,7 @@
-import { ReactElement, useContext, useEffect, useState, useRef } from 'react';
+import { memo, ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_5.jpg'
+import { useNavigate } from "react-router-dom";
 
 type UserInputType = {
   title: string,
@@ -9,13 +10,13 @@ type UserInputType = {
   text: string
 }
 
-const NewReview = ():ReactElement => {
-  const { userToken } = useContext(AuthorizeContext)
+const NewReview = memo(():ReactElement => {
+  const { userToken } = useContext(AuthorizeContext);
 
   const [userInput, setUserInput] = useState<UserInputType>({title:'',detail:'',url:'',text:''});
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [loginError, setLoginError] = useState<boolean>(false);
   const [resStatus, setResStatus] = useState<number>(200);
+  const [isError, setIsError] = useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null!);
   const detailRef = useRef<HTMLTextAreaElement>(null!);
@@ -23,8 +24,12 @@ const NewReview = ():ReactElement => {
   const textRef = useRef<HTMLTextAreaElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
 
-  async function submit(): Promise<void> {
-    const url = await fetch(
+  let ErrorAlert: ReactElement;
+
+  const navigate = useNavigate();
+
+  const submit = async(): Promise<void> => {
+    await fetch(
       "https://api-for-missions-and-railways.herokuapp.com/books",
       {
         method: 'POST',
@@ -37,34 +42,25 @@ const NewReview = ():ReactElement => {
         })
       }
     ).then(res => {
-      return res.json();
-    })
-    if (await url.token) {
-      setResStatus(200);
-      setLoginError(false);
-      console.log(await url.token);
-    } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(400);
-          setLoginError(true);
-        }
-        else if (await url.ErrorCode === 403) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(403);
-          setLoginError(true);
-        }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(500);
-          setLoginError(true);
-        }
-        console.log(loginError)
-        console.log(resStatus)
+      if (res.ok) {
+        setIsError(false);
+        setResStatus(200);
+        navigate('/');
       }
-    }
-  }
+      else {
+        setIsError(true);
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 401) {
+          setResStatus(401);
+        }
+        else {
+          setResStatus(500);
+        }
+      }
+    })
+  };
 
   const checkInput = (): void =>{
     // ユーザーの入力をstateに反映
@@ -86,16 +82,41 @@ const NewReview = ():ReactElement => {
     else {
       setIsFormValid(false);
     }
-  }
+  };
 
   useEffect(()=>{
     // フォームが必要な条件を満たすならボタンを有効化
     if (isFormValid) {
-      btnRef.current.disabled = false
+      btnRef.current.disabled = false;
     } else {
-      btnRef.current.disabled = true
+      btnRef.current.disabled = true;
     }
   })
+
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (isError) {
+    if (resStatus === 400) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラー：すべてのフォームを埋めてください
+        </div>
+      );
+    }
+    else if (resStatus === 401) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          認証エラーが起きました。しばらくしてからもう一度お試しください
+        </div>
+      );
+    }
+    else if (resStatus === 500) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラーが起きました。しばらくしてからもう一度お試しください
+        </div>
+      );
+    }
+  }
 
   return (
     <div id="newReviewPage">
@@ -142,9 +163,10 @@ const NewReview = ():ReactElement => {
             レビューを投稿
           </button>
         </div>
+        {ErrorAlert!}
       </div>
     </div>
   )
-}
+})
 
 export default NewReview;

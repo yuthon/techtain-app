@@ -1,6 +1,6 @@
-import { ReactElement, useContext, useEffect, useState, useRef } from 'react';
+import { memo, ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import background from './bg_5.jpg'
 
 type UserInputType = {
@@ -20,7 +20,7 @@ type detailType = {
   isMine: boolean
 }
 
-const ReviewEdit = (): ReactElement => {
+const ReviewEdit = memo((): ReactElement => {
 
   const { userToken } = useContext(AuthorizeContext);
 
@@ -45,12 +45,14 @@ const ReviewEdit = (): ReactElement => {
 
   let ErrorAlert: ReactElement;
 
+  const navigate = useNavigate();
+
   // 変更を保存する
-  async function save(): Promise<void> {
-    const response = await fetch(
-      "https://api-for-missions-and-railways.herokuapp.com/books",
+  const save = async(): Promise<void> => {
+    await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),
         body: JSON.stringify({
           "title": userInput.title,
@@ -63,73 +65,63 @@ const ReviewEdit = (): ReactElement => {
       if (res.ok) {
         setSubmitError(false);
         setResStatus(200);
-        return res.json();
+        navigate(`/detail/${bookId}`);
       }
       else {
         setSubmitError(true);
-        return res.json();
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 403) {
+          setResStatus(403);
+        }
+        else if (res.status === 404) {
+          setResStatus(404);
+        }
+        else if (res.status === 500) {
+          setResStatus(500);
+        }
       }
     })
-
-    if (await !response.ErrorCode) {
-
-    } else {
-      if (await response.ErrorCode === 400) {
-        setResStatus(400);
-        setSubmitError(true);
-      }
-      else if (await response.ErrorCode === 403) {
-        setResStatus(403);
-        setSubmitError(true);
-      }
-      else if (await response.ErrorCode === 404) {
-        setResStatus(404);
-        setSubmitError(true);
-      }
-      else if (await response.ErrorCode === 500) {
-        setResStatus(500);
-        setSubmitError(true);
-      }
-    }
   };
 
   // レビュー詳細を取得
-  async function getDetail(): Promise<void> {
-    const response = await fetch(
-      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`, {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
+  const getDetail = async(): Promise<void> => {
+    const response: detailType = await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
+      {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
     ).then(res => {
       if (res.ok) {
-        setResStatus(200);
         setGetError(false);
+        setResStatus(200);
         return res.json();
       }
       else {
         setGetError(true);
-        return res.json();
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 401) {
+          setResStatus(401);
+        }
+        else if (res.status === 404) {
+          setResStatus(404);
+        }
+        else if (res.status === 500) {
+          setResStatus(500);
+        }
+        return null;
       }
     })
     
-    if (await !response.ErrorCode) {
+    if (response) {
       setReviewDetail(response);
-    } else {
-      if (await response.ErrorCode === 400) {
-        setResStatus(400);
-        setGetError(true);
-      }
-      else if (await response.ErrorCode === 401) {
-        setResStatus(401);
-        setGetError(true);
-      }
-      else if (await response.ErrorCode === 500) {
-        setResStatus(500);
-        setGetError(true);
-      }
     }
-  }
+  };
 
   // レビューを削除
-  async function deleteReview(): Promise<void> {
-    const response = await fetch(
+  const deleteReview = async(): Promise<void> => {
+    await fetch(
       `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
       {
         method: 'DELETE',
@@ -139,33 +131,24 @@ const ReviewEdit = (): ReactElement => {
       if (res.ok) {
         setDeleteError(false);
         setResStatus(200);
+        navigate('/');
       }
       else {
         setDeleteError(true);
-        return res.json();
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 403) {
+          setResStatus(403);
+        }
+        else if (res.status === 404) {
+          setResStatus(404);
+        }
+        else {
+          setResStatus(500);
+        }
       }
     })
-
-    if (await !response.ErrorCode) {
-      console.log(response)
-    } else {
-      if (await response.ErrorCode === 400) {
-        setResStatus(400);
-        setDeleteError(true);
-      }
-      else if (await response.ErrorCode === 403) {
-        setResStatus(403);
-        setDeleteError(true);
-      }
-      else if (await response.ErrorCode === 404) {
-        setResStatus(404);
-        setDeleteError(true);
-      }
-      else if (await response.ErrorCode === 500) {
-        setResStatus(500);
-        setDeleteError(true);
-      }
-    }
   };
 
   const checkInput = (): void =>{
@@ -176,14 +159,21 @@ const ReviewEdit = (): ReactElement => {
       url: urlRef.current.value,
       text: textRef.current.value,
     });
-    // フォームに値が入っているかチェック
+    // フォームに値が入っているかチェック&フォームの値が変更されているかチェック
     if (
       titleRef.current.value !== '' &&
       detailRef.current.value !== '' &&
       urlRef.current.value !== '' &&
       textRef.current.value !== ''
     ) {
-      setIsFormValid(true);
+      if (
+        titleRef.current.value !== reviewDetail.title ||
+        detailRef.current.value !== reviewDetail.detail ||
+        urlRef.current.value !== reviewDetail.url ||
+        textRef.current.value !== reviewDetail.review
+      ) {
+        setIsFormValid(true);
+      }
     }
     else {
       setIsFormValid(false);
@@ -257,7 +247,7 @@ const ReviewEdit = (): ReactElement => {
     if (isFormValid) {
       btnRef.current.disabled = false
     } else {
-      // btnRef.current.disabled = true
+      btnRef.current.disabled = true
     }
   })
 
@@ -318,6 +308,6 @@ const ReviewEdit = (): ReactElement => {
       </div>
     </div>
   )
-}
+})
 
 export default ReviewEdit;

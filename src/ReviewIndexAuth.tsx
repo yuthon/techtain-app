@@ -1,20 +1,20 @@
-import { ReactElement, useState, useContext } from 'react';
+import { memo, ReactElement, useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import InfiniteScroll  from "react-infinite-scroller"
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_5.jpg'
 
 type ReviewType = {
-  detail?: string,
-  id?: string,
+  detail: string,
+  id: string,
   isMine?: boolean,
-  review?: string,
-  reviewer?: string,
-  title?: string,
-  url?: string,
+  review: string,
+  reviewer: string,
+  title: string,
+  url: string,
 }
 
-const ReviewIndexAuth = (): ReactElement => {
+const ReviewIndexAuth = memo((): ReactElement => {
   // 表示するリスト
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   //再読み込み判定
@@ -25,7 +25,6 @@ const ReviewIndexAuth = (): ReactElement => {
 
   //項目を読み込むときのコールバック
   const loadMore = async (offset: number): Promise<void> => {
-      
     const response = await fetch(
       `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset*10-10}`,
       {
@@ -48,17 +47,17 @@ const ReviewIndexAuth = (): ReactElement => {
       return;
     }
     //取得データをリストに追加
-    setReviewList([...reviewList, ...response])
+    setReviewList([...reviewList, ...response]);
   };
 
   let ErrorAlert: ReactElement = (
     <div className="alert alert-warning mt-5" role="alert">
       エラーが起きました。しばらくしてからもう一度お試しください。
     </div>
-  )
+  );
 
   //各スクロール要素
-  const items = (
+  const items: JSX.Element[] = (
     reviewList.map(
       (review: ReviewType, index: number) => review.isMine ? (
         <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
@@ -143,20 +142,20 @@ const ReviewIndexAuth = (): ReactElement => {
         </div>
       )
     )
-  )
+  );
 
   //ロード中に表示する項目
-  const loader: ReactElement =<div className="loader" key={0}>読み込み中...</div>;
+  const loader: ReactElement = (
+    <div className="loader" key={0}>読み込み中...</div>
+  );
 
   return isError ? (
-    <>
-      <div id="reviewPage-error">
-        <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
-        <div className="container-fuild container-lg">
-          {ErrorAlert!}
-        </div>
+    <div id="reviewPage-error">
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
+      <div className="container-fuild container-lg">
+        {ErrorAlert!}
       </div>
-    </>
+    </div>
   ) : (
     <div id="reviewPage">
       <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
@@ -171,6 +170,6 @@ const ReviewIndexAuth = (): ReactElement => {
       </div>
     </div>
   )
-}
+})
 
 export default ReviewIndexAuth;

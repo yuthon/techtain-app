@@ -1,4 +1,4 @@
-import { ReactElement, useState, useContext } from 'react';
+import { memo, ReactElement, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from 'react-router-dom';
 import InfiniteScroll  from 'react-infinite-scroller';
@@ -13,7 +13,7 @@ type ReviewType = {
   url: string,
 }
 
-function MyReviews (): ReactElement {
+const MyReviews = memo((): ReactElement => {
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   const [isError, setIsError] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -47,16 +47,16 @@ function MyReviews (): ReactElement {
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
       setHasMore(false);
-      return;
+      return
     }
     //取得データをリストに追加
-    setReviewList([...reviewList, ...listToDisplay])
+    setReviewList([...reviewList, ...listToDisplay]);
   };
 
   //各スクロール要素
-  const items = (
+  const items: JSX.Element[] = (
     reviewList.map(
-      (review: ReviewType, index: number) => 
+      (review: ReviewType, index: number) => (
         <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
           <Link className="card-detailLink" to={`/detail/${review.id}`}></Link> 
           <div className="card-header d-flex justify-content-between">
@@ -86,30 +86,35 @@ function MyReviews (): ReactElement {
             <div className="d-flex link-to-profile">
               <Link className="d-flex link-to-profile" to="/profile" >
                 <svg className="circle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  {/* <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --> */}
-                    <path
-                      d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM256 128c39.77 0 72 32.24 72 72S295.8 272 256 272c-39.76 0-72-32.24-72-72S216.2 128 256 128zM256 448c-52.93 0-100.9-21.53-135.7-56.29C136.5 349.9 176.5 320 224 320h64c47.54 0 87.54 29.88 103.7 71.71C356.9 426.5 308.9 448 256 448z"
-                      fill="#adb5bd"
-                    />
-                  </svg>
-                </Link>
-                <Link className="d-flex link-to-profile" to="/profile" >
-                  <p className="my-auto ms-2 username-link">{review.reviewer}</p>
-                </Link>
-              </div>
+                {/* <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --> */}
+                  <path
+                    d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM256 128c39.77 0 72 32.24 72 72S295.8 272 256 272c-39.76 0-72-32.24-72-72S216.2 128 256 128zM256 448c-52.93 0-100.9-21.53-135.7-56.29C136.5 349.9 176.5 320 224 320h64c47.54 0 87.54 29.88 103.7 71.71C356.9 426.5 308.9 448 256 448z"
+                    fill="#adb5bd"
+                  />
+                </svg>
+              </Link>
+              <Link className="d-flex link-to-profile" to="/profile" >
+                <p className="my-auto ms-2 username-link">{review.reviewer}</p>
+              </Link>
             </div>
+          </div>
         </div>
+      )
     )
-  )
+  );
 
   let ErrorAlert: ReactElement = (
     <div className="alert alert-warning mt-5" role="alert">
       エラーが起きました。しばらくしてからもう一度お試しください。
     </div>
-  )
+  );
 
   //ロード中に表示する項目
-  const loader: ReactElement =<div className="loader" key={0}>読み込み中...</div>;
+  const loader: ReactElement = (
+    <div className="loader" key={0}>
+      読み込み中...
+    </div>
+  );
   
   return isError ? (
     <>
@@ -121,14 +126,13 @@ function MyReviews (): ReactElement {
     </>
   ) : (
     <InfiniteScroll
-      loadMore={loadMore}    //項目を読み込む際に処理するコールバック関数
-      hasMore={hasMore}      //読み込みを行うかどうかの判定
+      loadMore={loadMore}
+      hasMore={hasMore}
       loader={loader}
-      useWindow={false}
-    >                       {/* 読み込み最中に表示する項目 */}
-      {items}             {/* 無限スクロールで表示する項目 */}
+    >
+      {items}
     </InfiniteScroll>
   )
-}
+})
 
 export default MyReviews;

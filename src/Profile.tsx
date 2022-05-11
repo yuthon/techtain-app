@@ -22,8 +22,8 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const nameRef = useRef<HTMLInputElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
 
-  async function update(): Promise<void> {
-    const response = await fetch(
+  const update = async(): Promise<void> => {
+    await fetch(
       'https://api-for-missions-and-railways.herokuapp.com/users',
       {
         method: 'PUT',
@@ -35,23 +35,20 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
         setUserName(userInput);
         setIsError(false);
         setResStatus(200);
-        return res.json();
       }
       else {
         setIsError(true);
-        return res.json();
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 403) {
+          setResStatus(403);
+        }
+        else {
+          setResStatus(500);
+        }
       }
     })
-
-    if (await response.ErrorCode === 400) {
-      setResStatus(400);
-    }
-    else if (await response.ErrorCode === 403) {
-      setResStatus(403);
-    }
-    else if (await response.ErrorCode === 500) {
-      setResStatus(500);
-    }
   };
 
   // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
@@ -61,14 +58,14 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
         <div className="alert alert-warning mt-3" role="alert">
           エラー：フォームに文字が入力されていません
         </div>
-      )
+      );
     }
     else if (resStatus === 403 || resStatus === 500) {
       ErrorAlert = (
         <div className="alert alert-warning mt-3" role="alert">
           エラーが起きました。しばらくしてからもう一度お試しください
         </div>
-      )
+      );
     }
   }
 

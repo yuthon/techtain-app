@@ -9,11 +9,12 @@ type HeaderProps = {
 }
 
 const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
+
   const authContext = useContext(AuthorizeContext);
 
   const logOut = (): void => {
     localStorage.removeItem('v_|2Q)iA~*rn%');
-    authContext.setUserToken('');
+    authContext.setUserToken(null);
     authContext.setIsAuthorized(false);
   };
 
@@ -69,10 +70,10 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
-                  <Link to="/signup">登録</Link>
+                  <Link className="header-link" to="/signup">登録</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link to="/login">ログイン</Link>
+                  <Link className="header-link" to="/login">ログイン</Link>
                 </li>
               </ul>
             </div>
