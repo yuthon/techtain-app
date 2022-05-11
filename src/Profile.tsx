@@ -130,6 +130,7 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
               {ErrorAlert!}
             </div>
           </div>
+          <h2 className="text-white">あなたが投稿したレビュー</h2>
           <MyReviews />
         </div>
       </div>

@@ -1,134 +1,194 @@
-import { ReactElement, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { memo, ReactElement, useState, useContext, useRef } from 'react';
+import InfiniteScroll  from "react-infinite-scroller"
+import { AuthorizeContext } from './AuthorizeProvider';
+import background from './bg_5.jpg'
+import ReviewCard from './ReviewCard';
 
 type ReviewType = {
   detail: string,
   id: string,
+  isMine?: boolean,
   review: string,
   reviewer: string,
   title: string,
   url: string,
 }
 
-function ReviewIndex (): ReactElement {
+const ReviewIndexAuth = memo((): ReactElement => {
+  // 表示するリスト
+  const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
+  //再読み込み判定
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  // エラー判定
+  const [isError, setIsError] = useState<boolean>(false);
+  // 認証コンテキストからトークンを持ってくる
+  const { userToken } = useContext(AuthorizeContext);
+  // 検索欄
+  const searchRef = useRef<HTMLInputElement>(null!);
+  // 検索結果
+  const [listMatched, setListMatched] = useState<Array<ReviewType>>([]);
 
-  const [reviews, setReViews] = useState<Array<ReviewType>>([{detail:'',id:'',review:'',reviewer:'',title:'',url:''}]);
+  //検索結果を代入するための変数
+  let matchedReviews: JSX.Element[];
 
-  async function getReviews(): Promise<void> {
-    let listToDisplay: Array<ReviewType>;
-    // テスト投稿のレビューを除外して、レビューを10件取得する
-    // まずapiから最初の10件を取得
-    const reviewList = (await fetch('https://api-for-missions-and-railways.herokuapp.com/public/books'
-    , {method: 'GET'}
+  //項目を読み込むときのコールバック
+  const loadMore = async (offset: number): Promise<void> => {
+    const response: Array<ReviewType> = await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset*10-10}`,
+      {
+        method: 'GET',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+      }
     ).then(res => {
-      return res.json();
-    })
-    )
-    // テスト投稿のレビューを除外する
-    listToDisplay = reviewList.filter((review: ReviewType)=>{
-      return (
-        // 有効なurlが含まれるかどうか
-        review.url.indexOf('http') > -1 &&
-        // 詳細が25文字以上
-        review.detail.length > 25 &&
-        // レビューが5文字以上
-        review.review.length > 4
-      )
-    })
-    // 同一の書籍に対するレビューを除外する
-    listToDisplay = listToDisplay.filter((review: ReviewType, index, self)=>{
-      // 書籍タイトルだけを抽出してリスト化
-      const titleList = self.map(review => review.title);
-      return (
-        titleList.indexOf(review.title) === index
-      )
-    })
-    // フィルター後のレビュー数が10に満たない場合、10を超えるまでapiからレビューを取得し続ける
-    // ただし、呼び出しは最大で4回までとする
-    for (let i=0; i < 4; i ++) {
-      if (listToDisplay.length < 10) {
-        const reviewList = await fetch(`https://api-for-missions-and-railways.herokuapp.com/public/books?offset=${(i+1)*10}`
-        , {method: 'GET'}
-        ).then(res => {
-          return res.json();
-        })
-        // テスト投稿のレビューを除外する
-        let list: Array<ReviewType> = reviewList.filter((review: ReviewType)=>{
-          return (
-            // 有効なurlが含まれるかどうか
-            review.url.indexOf('http') > -1 &&
-            // 詳細が25文字以上
-            review.detail.length > 25 &&
-            // レビューが5文字以上
-            review.review.length > 4
-          )
-        })
-        // 同一の書籍に対するレビューを除外する
-        list = list.filter((review: ReviewType, index, self)=>{
-          const titleList: Array<string> = self.map(review => review.title);
-          return (
-            titleList.indexOf(review.title) === index
-          )
-        })
-        // 配列を結合
-        listToDisplay = listToDisplay.concat(list);
-        // 結合した後の配列に書籍の重複があれば削除
-        listToDisplay = listToDisplay.filter((review: ReviewType, index, self)=>{
-          // 書籍タイトルだけを抽出してリスト化
-          const titleList = self.map(review => review.title);
-          return (
-            titleList.indexOf(review.title) === index
-          )
-        })
-      } else {
-        // 10件を超えたらループを抜ける
-        break
+      if (res.ok) {
+        setIsError(false);
+        return res.json();
       }
-    }
+      else {
+        setIsError(true);
+      }
+    })
 
-    setReViews(listToDisplay);
-    if (await reviewList) {
-      // console.log(await reviewList)
-    } else {
-      if (await reviewList.ErrorCode) {
-        if (await reviewList.ErrorCode === 400) {
-          console.log(await reviewList.ErrorMessageJP)
-        }
-        else if (await reviewList.ErrorCode === 401) {
-          console.log(await reviewList.ErrorMessageJP)
-        }
-        else if (await reviewList.ErrorCode === 500) {
-          console.log(await reviewList.ErrorMessageJP)
-        }
-      }
+    //データ件数が0件の場合、処理終了
+    if (response.length < 1) {
+      setHasMore(false);
+      return;
     }
+    //取得データをリストに追加
+    setReviewList([...reviewList, ...response]);
+  };
+
+  //各スクロール要素
+  const items: JSX.Element[] = (
+    reviewList.map(
+      (review: ReviewType, index: number) => (
+        <ReviewCard review={review} key={index} />
+      )
+    )
+  );
+
+  //ロード中に表示する項目
+  const loader: ReactElement = (
+    <div className="loader" key={0}>
+      読み込み中...
+    </div>
+  );
+
+  // 検索機能
+  const test = async (): Promise<void> => {
+    let offset: number = 0
+    // 必ず1度は実行されるように1を代入
+    let responseLength: number = 1;
+
+    // ループ実行後にstateを更新するためのリスト
+    let match: Array<ReviewType> = [];
+
+    // 検索欄に入力された文字列
+    let input: string = searchRef.current.value;
+    // 空白を全て削除
+    input.replaceAll(/\s+/g, '');
+    // 全角の英数字を半角に直す
+    input = input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+    // 大文字小文字を無視して正規表現化
+    const str = new RegExp(input, 'i');
+
+    do {
+      let response: Array<ReviewType> = await fetch(
+        `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset}`,
+        {
+          method: 'GET',
+          headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+        }
+      ).then(res => {
+        if (res.ok) {
+          setIsError(false);
+          return res.json();
+        }
+        else {
+          setIsError(true);
+        }
+      })
+
+      // 条件の更新
+      responseLength = response.length;
+      // testメソッドでフィルター
+      response = response.filter((review: ReviewType)=>{
+        return (
+          // 全角の英数字は半角に直し、スペースは削除して比較する
+          str.test(
+            (review.title.replace(
+              /[Ａ-Ｚａ-ｚ０-９]/g,
+              (s) => {
+                return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+              }
+            )).replaceAll(/\s+/g, '')
+          )
+        )
+      })
+      // 配列を結合
+      match = match.concat(response);
+      offset = offset + 10;
+    } while (
+        // apiからデータが返ってこなくなるまで検索
+        responseLength >= 1
+      )
+    //マッチしたデータをリストに追加
+    setListMatched(match);
+  };
+
+  // コンポーネントが再レンダーされた際、listMatchedに要素が入っていたら表示する
+  if (listMatched.length > 0) {
+    matchedReviews = (
+      listMatched.map(
+        (review: ReviewType, index: number) => (
+          <ReviewCard review={review} key={index} />
+        )
+      )
+    )
   }
 
-  useEffect(()=>{
-    getReviews();
-  },[])
-  
-  return (
-    <>
-      <h2>Review Index</h2>
-      {reviews!.map(
-        (review: ReviewType, index: number) => (
-          <div className="card review-card text-dark bg-light mb-3 mx-auto" key={index}>
-            <div className="card-header">
-              <h5 className="fw-bold">{review.title}</h5>
-            </div>
-            <div className="card-body">
-              <p className="card-text text-truncate">{review.detail}</p>
-              <p className="card-text text-truncate">{review.review}</p>
-              <p>{review.reviewer}</p>
-              <a className="card-link" href={review.url}>書籍へのリンク</a>
-              <Link className="card-link" to={`/detail/${review.id}`}>詳細</Link>
-            </div>
-          </div>
-        )
-      )}
-    </>
+  return isError ? (
+    <div id="reviewPage-error">
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
+      <div className="container-fuild container-lg">
+        <div className="alert alert-warning mt-5" role="alert">
+          エラーが起きました。しばらくしてからもう一度お試しください。
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div id="reviewPage">
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
+      <div className="container-fuild container-lg">
+        <div className="d-flex">
+          <input
+            className="form-control me-2"
+            type="search"
+            placeholder="書籍を検索"
+            aria-label="Search"
+            ref={searchRef}
+          />
+          <button
+            className="btn btn-success"
+            type="submit"
+            onClick={()=>{test()}}
+          >
+            検索
+          </button>
+        </div>
+        {matchedReviews!}
+        <InfiniteScroll
+          loadMore={loadMore}    //項目を読み込む際に処理するコールバック関数
+          hasMore={hasMore}      //読み込みを行うかどうかの判定
+          loader={loader}
+        >                       {/* 読み込み最中に表示する項目 */}
+          {items}             {/* 無限スクロールで表示する項目 */}
+        </InfiniteScroll>
+      </div>
+    </div>
   )
-}
+})
 
-export default ReviewIndex;
+export default ReviewIndexAuth;

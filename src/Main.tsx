@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
-import ReviewIndexAuth from './ReviewIndexAuth';
+import ReviewIndexAuth from './ReviewIndex';
 import { AuthorizeContext } from './AuthorizeProvider';
 import Profile from './Profile';
 import NewReview from './NewReview';
@@ -20,8 +20,9 @@ const Main = (): ReactElement => {
 
   // 認証トークンを利用してユーザ情報を取得
   async function getUser(): Promise<void> {
-    const response: {name: string} = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
-    {headers: new Headers({ 'Authorization': `Bearer ${authContext.userToken}`})}
+    const response: {name: string} = await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/users`,
+      {headers: new Headers({ 'Authorization': `Bearer ${authContext.userToken}`})}
     ).then(res => {
       if (res.ok) {
         setIsError(false);
