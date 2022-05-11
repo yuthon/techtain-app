@@ -1,5 +1,10 @@
 .App {
-  text-align: center;
+  height: 100vh;
+}
+
+
+a {
+  text-decoration: none;
 }
 
 .App-logo {
@@ -14,15 +19,20 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* background-color: #282c34; */
+  /* height: 4.5rem; */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center;
+  justify-content: center; */
+  /* font-size: calc(10px + 2vmin); */
   color: white;
 }
+
+/* .App-header h1 {
+  text-align: start;
+  margin-left: 20px;
+} */
 
 .App-link {
   color: #61dafb;
@@ -35,4 +45,252 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.form {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.logo {
+  width: 26px;
+  height: 26px;
+  margin-right: 5px;
+}
+
+.title {
+  margin-left: 20px;
+}
+
+#sidebar {
+  width: 256px;
+  height: calc(100vh - 4.5rem);
+  background: #282c34;
+}
+
+#top-banner {
+  height: 4rem;
+  background: #282c34;;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: calc(100vw - 256px);
+}
+
+#review-column {
+  height: 200px;
+}
+
+.userIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.userName {
+  font-size: 1.35rem;
+  color: white;
+  margin-left: 5px;
+}
+
+/* .menu {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+} */
+
+.review-card {
+  /* width: 35rem; */
+  cursor: pointer;
+  /* transition: all 0.5s ease 0s; */
+  position: relative;
+  height: 12.25rem;
+}
+
+#btn-loadmore {
+  background: white;
+}
+
+#btn-loadmore:hover {
+  background: rgba(255, 255, 255, 0.61);
+}
+
+.ellipsis {
+  height: 35px;
+  width: 35px;
+}
+
+.ellipsis:hover path{
+  stroke: blue;
+}
+
+.ellipsis-btn {
+  background: none;
+  border: none;
+  color: transparent;
+  padding: 0;
+  width: 30px;
+} 
+
+.circle-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+
+
+.circle-icon:hover path {
+  fill: #898b8d;
+}
+
+.username-link {
+  color: black;
+}
+
+.username-link:hover {
+  text-decoration: underline;
+}
+
+#signupOrLogin {
+  width: 100%;
+}
+
+#btn-register {
+  width: 65%;
+}
+
+#link-login {
+  font-size: 1.25rem;
+  margin: 0.5rem 0 0.5rem 0rem;
+  font-weight: bold;
+  color: rgb(121, 119, 119);
+}
+
+#link-login:hover {
+  text-decoration: underline;
+}
+
+#signupPage-content {
+  padding-top: 10vh;
+}
+
+.signupPage-logo {
+  width: 2rem;
+  margin-right: 8px;
+  margin-bottom: 0.5rem;
+}
+
+#signupForm {
+  border: 2px solid rgba(207, 207, 207, 0.2);
+  border-radius: 8px;
+  background: white;
+  padding: 20px;
+}
+
+#login-form {
+  border: 2px solid rgba(207, 207, 207, 0.2);
+  border-radius: 8px;
+  background: white;
+  padding: 20px;
+}
+
+#loginPage {
+  padding-top: 15vh;
+}
+
+#reviewPage {
+  padding-top: 5rem;
+}
+
+#reviewPage-error {
+  padding-top: 5rem;
+  height: 100vh;
+}
+
+#newReviewPage {
+  padding-top: 6rem;
+}
+
+.card-detailLink {
+  height: 12.25rem;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.review-dropdown {
+  z-index: 2;
+}
+
+.link-to-profile {
+  z-index: 2;
+}
+
+#reviewDetailPage {
+  padding-top: 6rem;
+  height: 100%;
+}
+
+#reviewDetail {
+  background: rgba(1,1,1, 0.7)
+}
+
+#profilePage {
+  padding-top: 6rem;
+}
+
+.bg-bookshelf {
+  height: 100vh;
+  z-index: -5;
+}
+
+.bg-books {
+  height: 100vh;
+  z-index: -5;
+}
+
+.profile-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.profile-username {
+  font-size: 1.5rem;
+}
+
+#btn-profile-edit {
+  font-weight: bold;
+}
+
+.header-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.header-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+#header-userLink {
+
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+#header-userLink:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+#detail-column{
+  height: 6rem;
+}
+
+.abovebg {
+  z-index: 1;
+}
+
+.loader {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
 }
