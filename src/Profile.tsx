@@ -1,15 +1,20 @@
-import { ReactElement, useEffect, useState, useContext, useRef } from 'react';
+import { FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import MyReviews from './MyReviews';
+import background from './bg_5.jpg'
 
-type userDataType = {
-  name: string
+type ProfileProps = {
+  userName: string | null;
+  setUserName: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-function Profile (): ReactElement {
-  const [userName, setUserName] = useState<string>('')
+const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const [userInput, setUserInput] = useState<string>('');
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [resStatus, setResStatus] = useState<number>(200);
+
+  let ErrorAlert: ReactElement;
 
   // トークンをコンテキストから取得
   const { userToken } = useContext(AuthorizeContext);
@@ -17,46 +22,58 @@ function Profile (): ReactElement {
   const nameRef = useRef<HTMLInputElement>(null!);
   const btnRef = useRef<HTMLButtonElement>(null!);
 
-  // 認証トークンを利用してユーザ情報を取得
-  async function getUser(): Promise<void> {
-    const userInfo: userDataType = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
-    {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
+  const update = async(): Promise<void> => {
+    await fetch(
+      'https://api-for-missions-and-railways.herokuapp.com/users',
+      {
+        method: 'PUT',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),
+        body: JSON.stringify({"name": userInput})
+      }
     ).then(res => {
-      return res.json();
-    })
-    setUserName(userInfo.name)
-  };
-
-  async function update(): Promise<void> {
-    const url = await fetch("https://api-for-missions-and-railways.herokuapp.com/users"
-    , {method: 'PUT', headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),body: JSON.stringify({"name": userInput})}
-    ).then(res => {
-      return res.json();
-    })
-    if (await url.token) {
-    } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
+      if (res.ok) {
+        setUserName(userInput);
+        setIsError(false);
+        setResStatus(200);
+      }
+      else {
+        setIsError(true);
+        if (res.status === 400) {
+          setResStatus(400);
         }
-        else if (await url.ErrorCode === 403) {
-          console.log(await url.ErrorMessageJP)
+        else if (res.status === 403) {
+          setResStatus(403);
         }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
+        else {
+          setResStatus(500);
         }
       }
-    }
+    })
   };
 
-  let ErrorAlert: ReactElement;
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (isError) {
+    if (resStatus === 400) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラー：フォームに文字が入力されていません
+        </div>
+      );
+    }
+    else if (resStatus === 403 || resStatus === 500) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラーが起きました。しばらくしてからもう一度お試しください
+        </div>
+      );
+    }
+  }
 
-  useEffect(()=>{
-    getUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  useEffect(() => {
+    nameRef.current.value = userName!;
+  },[userName])
 
-  useEffect(()=>{
+  useEffect(() => {
     // フォームが必要な条件を満たすならボタンを有効化
     if (isFormValid) {
       btnRef.current.disabled = false
@@ -81,7 +98,8 @@ function Profile (): ReactElement {
 
   return (
     <>
-      <div className="reviewPage-bg" id="profilePage">
+      <div id="profilePage">
+        <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg">
           <div className="mb-3 bg-light card p-3" id="userProfile">
             <div className="d-flex flex-wrap">
@@ -112,7 +130,6 @@ function Profile (): ReactElement {
               {ErrorAlert!}
             </div>
           </div>
-          {ErrorAlert!}
           <MyReviews />
         </div>
       </div>
