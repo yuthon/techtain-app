@@ -32,7 +32,7 @@ const Main = (): ReactElement => {
       }
     });
 
-    if (await response.name) {
+    if (response.name) {
       setUserName(response.name);
     }
   };
@@ -42,7 +42,7 @@ const Main = (): ReactElement => {
       getUser();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  },[authContext.isAuthorized])
 
   let ErrorAlert: ReactElement = (
     <div className="alert alert-warning mt-5" role="alert">
