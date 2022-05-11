@@ -1,6 +1,7 @@
 import { ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { useParams } from "react-router-dom";
+import background from './bg_5.jpg'
 
 type UserInputType = {
   title: string,
@@ -27,7 +28,9 @@ const ReviewEdit = (): ReactElement => {
 
   const [userInput, setUserInput] = useState<UserInputType>({title:'',detail:'',url:'',text:''});
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [loginError, setLoginError] = useState<boolean>(false);
+  const [getError, setGetError] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<boolean>(false);
   const [resStatus, setResStatus] = useState<number>(200);
   const [reviewDetail, setReviewDetail] = useState<detailType>({
     id:'',title:'',url:'',detail:'',review:'',reviewer:'',isMine:false
@@ -40,8 +43,11 @@ const ReviewEdit = (): ReactElement => {
   const btnRef = useRef<HTMLButtonElement>(null!);
   const deleteBtnRef = useRef<HTMLButtonElement>(null!);
 
+  let ErrorAlert: ReactElement;
+
+  // 変更を保存する
   async function save(): Promise<void> {
-    const url = await fetch(
+    const response = await fetch(
       "https://api-for-missions-and-railways.herokuapp.com/books",
       {
         method: 'POST',
@@ -54,89 +60,111 @@ const ReviewEdit = (): ReactElement => {
         })
       }
     ).then(res => {
-      return res.json();
+      if (res.ok) {
+        setSubmitError(false);
+        setResStatus(200);
+        return res.json();
+      }
+      else {
+        setSubmitError(true);
+        return res.json();
+      }
     })
-    if (await url.token) {
-      setResStatus(200);
-      setLoginError(false);
-      console.log(await url.token);
+
+    if (await !response.ErrorCode) {
+
     } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(400);
-          setLoginError(true);
-        }
-        else if (await url.ErrorCode === 403) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(403);
-          setLoginError(true);
-        }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
-          setResStatus(500);
-          setLoginError(true);
-        }
+      if (await response.ErrorCode === 400) {
+        setResStatus(400);
+        setSubmitError(true);
+      }
+      else if (await response.ErrorCode === 403) {
+        setResStatus(403);
+        setSubmitError(true);
+      }
+      else if (await response.ErrorCode === 404) {
+        setResStatus(404);
+        setSubmitError(true);
+      }
+      else if (await response.ErrorCode === 500) {
+        setResStatus(500);
+        setSubmitError(true);
       }
     }
   };
 
-  async function getDetail() {
-    const review = await fetch(`https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`
-    , {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
+  // レビュー詳細を取得
+  async function getDetail(): Promise<void> {
+    const response = await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`, {headers: new Headers({ 'Authorization': `Bearer ${userToken}`})}
     ).then(res => {
-      return res.json();
+      if (res.ok) {
+        setResStatus(200);
+        setGetError(false);
+        return res.json();
+      }
+      else {
+        setGetError(true);
+        return res.json();
+      }
     })
     
-    setReviewDetail(review);
-    if (await review) {
-      // console.log(await reviewList)
+    if (await !response.ErrorCode) {
+      setReviewDetail(response);
     } else {
-      if (await review.ErrorCode) {
-        if (await review.ErrorCode === 400) {
-          console.log(await review.ErrorMessageJP)
-        }
-        else if (await review.ErrorCode === 401) {
-          console.log(await review.ErrorMessageJP)
-        }
-        else if (await review.ErrorCode === 500) {
-          console.log(await review.ErrorMessageJP)
-        }
+      if (await response.ErrorCode === 400) {
+        setResStatus(400);
+        setGetError(true);
+      }
+      else if (await response.ErrorCode === 401) {
+        setResStatus(401);
+        setGetError(true);
+      }
+      else if (await response.ErrorCode === 500) {
+        setResStatus(500);
+        setGetError(true);
       }
     }
   }
 
+  // レビューを削除
   async function deleteReview(): Promise<void> {
-    const review = await fetch(
+    const response = await fetch(
       `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
       {
         method: 'DELETE',
         headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
       }
     ).then(res => {
-      return res;
+      if (res.ok) {
+        setDeleteError(false);
+        setResStatus(200);
+      }
+      else {
+        setDeleteError(true);
+        return res.json();
+      }
     })
-    if (await review) {
-      setResStatus(200);
-      setLoginError(false);
+
+    if (await !response.ErrorCode) {
+      console.log(response)
     } else {
-      // if (await review.ErrorCode) {
-      //   if (await review.ErrorCode === 400) {
-      //     console.log(await review.ErrorMessageJP)
-      //     setResStatus(400);
-      //     setLoginError(true);
-      //   }
-      //   else if (await review.ErrorCode === 403) {
-      //     console.log(await review.ErrorMessageJP)
-      //     setResStatus(403);
-      //     setLoginError(true);
-      //   }
-      //   else if (await review.ErrorCode === 500) {
-      //     console.log(await review.ErrorMessageJP)
-      //     setResStatus(500);
-      //     setLoginError(true);
-      //   }
-      // }
+      if (await response.ErrorCode === 400) {
+        setResStatus(400);
+        setDeleteError(true);
+      }
+      else if (await response.ErrorCode === 403) {
+        setResStatus(403);
+        setDeleteError(true);
+      }
+      else if (await response.ErrorCode === 404) {
+        setResStatus(404);
+        setDeleteError(true);
+      }
+      else if (await response.ErrorCode === 500) {
+        setResStatus(500);
+        setDeleteError(true);
+      }
     }
   };
 
@@ -162,6 +190,56 @@ const ReviewEdit = (): ReactElement => {
     }
   };
 
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (getError) {
+    if (resStatus === 404) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：投稿が存在しません</div>
+      )
+    }
+    else if (resStatus === 400 || resStatus === 403 || resStatus === 500) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
+      )
+    }
+  }
+
+  if (submitError) {
+    if (resStatus === 403) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">認証エラー：この投稿を編集する権限がありません</div>
+      )
+    }
+    else if (resStatus === 404) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：投稿が存在しません</div>
+      )
+    }
+    else if (resStatus === 400 || resStatus === 500) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
+      )
+    }
+  }
+
+  if (deleteError) {
+    if (resStatus === 403) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">認証エラー：この投稿を削除する権限がありません</div>
+      )
+    }
+    else if (resStatus === 404) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：投稿が存在しません</div>
+      )
+    }
+    else if (resStatus === 400 || resStatus === 500) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
+      )
+    }
+  }
+
   useEffect(()=>{
     getDetail();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,12 +257,13 @@ const ReviewEdit = (): ReactElement => {
     if (isFormValid) {
       btnRef.current.disabled = false
     } else {
-      btnRef.current.disabled = true
+      // btnRef.current.disabled = true
     }
   })
 
   return (
-    <div className="reviewPage-bg" id="newReviewPage">
+    <div id="newReviewPage">
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
       <div className="container-fuild container-lg" >
         <span className="input-group-text">書籍のタイトル</span>
         <input
@@ -235,6 +314,7 @@ const ReviewEdit = (): ReactElement => {
             レビューの削除
           </button>
         </div>
+        {ErrorAlert!}
       </div>
     </div>
   )

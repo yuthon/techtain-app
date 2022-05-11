@@ -1,5 +1,4 @@
 .App {
-  background: rgba(1,1,1, 0.2);
   height: 100vh;
 }
 
@@ -170,18 +169,6 @@ a {
   text-decoration: underline;
 }
 
-.signupPage-bg {
-  height: calc(100vh - 3.75rem);
-  background-image: url(./bg_6.jpg);
-  background-size: cover;
-}
-
-.reviewPage-bg {
-  background-image: url(./bg_5.jpg);
-  background-size: cover;
-  background-attachment: fixed
-}
-
 #signupPage-content {
   padding-top: 10vh;
 }
@@ -214,9 +201,13 @@ a {
   padding-top: 5rem;
 }
 
+#reviewPage-error {
+  padding-top: 5rem;
+  height: 100vh;
+}
+
 #newReviewPage {
   padding-top: 6rem;
-  height: 100%;
 }
 
 .card-detailLink {
@@ -245,10 +236,17 @@ a {
 
 #profilePage {
   padding-top: 6rem;
-  height: 100%;
 }
 
+.bg-bookshelf {
+  height: 100vh;
+  z-index: -5;
+}
 
+.bg-books {
+  height: 100vh;
+  z-index: -5;
+}
 
 .profile-icon {
   width: 2.5rem;
@@ -284,4 +282,15 @@ a {
 
 #detail-column{
   height: 6rem;
+}
+
+.abovebg {
+  z-index: 1;
+}
+
+.loader {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
 }

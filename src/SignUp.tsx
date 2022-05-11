@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useRef, useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import bookLogo from './bookLogo.svg';
 import { AuthorizeContext } from './AuthorizeProvider';
+import background from './bg_6.jpg';
 
 type UserInputType = {
   name: string,
@@ -10,12 +11,17 @@ type UserInputType = {
   confirm: string,
 }
 
+type responseType = {
+  token?: string,
+  ErrorCode?: number
+}
+
 function SignUp(): ReactElement {
 
   const [userInput, setUserInput] = useState<UserInputType>({name: '', email: '', password: '', confirm: ''});
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
-  const [submitError, setSubmitError] = useState<boolean>(false);
+  const [signupError, setSignupError] = useState<boolean>(false);
 
   const nameRef = useRef<HTMLInputElement>(null!);
   const emailRef = useRef<HTMLInputElement>(null!);
@@ -59,7 +65,7 @@ function SignUp(): ReactElement {
     else {
       setIsFormValid(false);
     }
-  }
+  };
 
   async function signup(): Promise<void> {
     const userInfo: object = {
@@ -68,34 +74,28 @@ function SignUp(): ReactElement {
       "password": userInput.password,
     }
 
-    const url = (await fetch("https://api-for-missions-and-railways.herokuapp.com/users"
-    , {method: 'POST', body: JSON.stringify(userInfo)}
+    const response: responseType = await fetch(
+      'https://api-for-missions-and-railways.herokuapp.com/users',
+      {method: 'POST', body: JSON.stringify(userInfo)}
     ).then(res => {
-      return res.json();
-    })
-    )
-    if (await url.token) {
-      setSubmitError(false);
-      localStorage.setItem('v_|2Q)iA~*rn%', url.token);
-      authContext.setUserToken(url.token);
-      authContext.setIsAuthorized(true);
-    } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
-          setSubmitError(true);
-        }
-        else if (await url.ErrorCode === 401) {
-          console.log(await url.ErrorMessageJP)
-          setSubmitError(true);
-        }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
-          setSubmitError(true);
-        }
+      if (res.ok) {
+        setSignupError(false);
+        return res.json();
       }
+      else {
+        setSignupError(true);
+        return res.json();
+      }
+    })
+    
+    if (await response.token) {
+      localStorage.setItem('v_|2Q)iA~*rn%', response.token!);
+      authContext.setUserToken(response.token!);
+      authContext.setIsAuthorized(true);
+    } else if (await response.ErrorCode) {
+      setSignupError(true);
     }
-  }
+  };
 
   // コンポーネントのレンダー時にパスワードが確認用と一致するかチェック
   // 一致しないならメッセージを表示
@@ -106,9 +106,9 @@ function SignUp(): ReactElement {
   }
 
   // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
-  if (submitError) {
+  if (signupError) {
     ErrorAlert = (
-      <div id="submit-error" className="alert alert-danger" role="alert">エラーが起きました。もう一度お試しください</div>
+      <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
     )
   }
 
@@ -123,7 +123,8 @@ function SignUp(): ReactElement {
   
   return (
     <>
-      <div className="signupPage-bg">
+      <div id="signupPage">
+        <img className="bg-books fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg" id="signupPage-content">
           <div className="row">
             <div className="col-md-6" id="welcomeMessage">
@@ -138,21 +139,49 @@ function SignUp(): ReactElement {
             </div>
             <div className="form col-md-6" id="signupForm">
               <div className="mb-3">
-                <input type="name" className="form-control" aria-describedby="emailHelp" ref={nameRef} onChange={()=>{checkInput()}} placeholder="ユーザー名" />
+                <input
+                  type="name"
+                  className="form-control"
+                  ref={nameRef} onChange={()=>{checkInput()}}
+                  placeholder="ユーザー名"
+                />
               </div>
               <div className="mb-3">
-                <input type="email" className="form-control" aria-describedby="emailHelp" ref={emailRef} onChange={()=>{checkInput()}} placeholder="Eメール" />
+                <input
+                  type="email"
+                  className="form-control"
+                  aria-describedby="emailHelp"
+                  ref={emailRef} onChange={()=>{checkInput()}}
+                  placeholder="Eメール"
+                />
               </div>
               <div className="mb-3">
-                <input type="password" className="form-control" ref={passwordRef} onChange={()=>{checkInput()}} placeholder="パスワード" />
-                {passwordWarning!}
+                <input
+                  type="password"
+                  className="form-control"
+                  ref={passwordRef}
+                  onChange={()=>{checkInput()}}
+                  placeholder="パスワード" 
+                />
               </div>
               <div className="mb-3">
-                <input type="password" className="form-control" ref={confirmRef} onChange={()=>{checkInput()}} placeholder="パスワード（確認用）"/>
+                <input
+                  type="password"
+                  className="form-control"
+                  ref={confirmRef}
+                  onChange={()=>{checkInput()}}
+                  placeholder="パスワード（確認用）"
+                />
                 {passwordWarning!}
               </div>
               <div className="d-flex flex-wrap justify-content-between" id="signupOrLogin">
-                <button className="btn btn-primary" id="btn-register" onClick={()=>{signup()}} ref={submitRef}>登録</button>
+                <button
+                  className="btn btn-primary"
+                  id="btn-register" onClick={()=>{signup()}}
+                  ref={submitRef}
+                >
+                  登録
+                </button>
                 <p className="my-auto">または</p>
                 <Link className="text-reset" to="/login">
                   <p id="link-login">ログイン</p>

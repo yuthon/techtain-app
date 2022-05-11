@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useRef, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from "react-router-dom";
+import background from './bg_6.jpg';
 
 type LoginInputType = {
   email: string,
@@ -52,8 +53,9 @@ function LogIn(): ReactElement {
       "password": userInput.password,
     }
 
-    const response = await fetch("https://api-for-missions-and-railways.herokuapp.com/signin"
-    , {method: 'POST', body: JSON.stringify(userInfo)}
+    const response = await fetch(
+      'https://api-for-missions-and-railways.herokuapp.com/signin',
+      {method: 'POST', body: JSON.stringify(userInfo)}
     ).then(res => {
       if (res.ok) {
         setLoginError(false);
@@ -116,6 +118,7 @@ function LogIn(): ReactElement {
   return (
     <>
       <div className="signupPage-bg" id="loginPage">
+        <img className="bg-books fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg">
           <div className="form" id="login-form">
             <div className="mb-3">

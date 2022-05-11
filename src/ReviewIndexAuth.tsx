@@ -2,6 +2,7 @@ import { ReactElement, useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import InfiniteScroll  from "react-infinite-scroller"
 import { AuthorizeContext } from './AuthorizeProvider';
+import background from './bg_5.jpg'
 
 type ReviewType = {
   detail?: string,
@@ -18,11 +19,12 @@ const ReviewIndexAuth = (): ReactElement => {
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   //再読み込み判定
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
   const { userToken } = useContext(AuthorizeContext);
 
   //項目を読み込むときのコールバック
-  const loadMore = async (offset: number) => {
+  const loadMore = async (offset: number): Promise<void> => {
       
     const response = await fetch(
       `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset*10-10}`,
@@ -31,11 +33,14 @@ const ReviewIndexAuth = (): ReactElement => {
         headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
       }
     ).then(res => {
-      return res.json();
+      if (res.ok) {
+        setIsError(false);
+        return res.json();
+      }
+      else {
+        setIsError(true);
+      }
     })
-    .catch(error => {
-      console.error(error.json());
-    });
 
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
@@ -44,7 +49,13 @@ const ReviewIndexAuth = (): ReactElement => {
     }
     //取得データをリストに追加
     setReviewList([...reviewList, ...response])
-  }
+  };
+
+  let ErrorAlert: ReactElement = (
+    <div className="alert alert-warning mt-5" role="alert">
+      エラーが起きました。しばらくしてからもう一度お試しください。
+    </div>
+  )
 
   //各スクロール要素
   const items = (
@@ -97,7 +108,7 @@ const ReviewIndexAuth = (): ReactElement => {
           <Link className="card-detailLink" to={`/detail/${review.id}`}></Link> 
           <div className="card-header d-flex justify-content-between">
             <h5 className="fw-bold text-start my-auto">{review.title}</h5>
-            <div className="dropdown">
+            <div className="dropdown review-dropdown">
               <button className="dropdown-toggle ellipsis-btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 <svg className="ellipsis" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                 {/* <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --> */}
@@ -135,22 +146,30 @@ const ReviewIndexAuth = (): ReactElement => {
   )
 
   //ロード中に表示する項目
-  const loader =<div className="loader" key={0}>Loading ...</div>;
+  const loader: ReactElement =<div className="loader" key={0}>読み込み中...</div>;
 
-  return (
+  return isError ? (
     <>
-      <div className="reviewPage-bg" id="reviewPage">
+      <div id="reviewPage-error">
+        <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg">
-          <InfiniteScroll
-            loadMore={loadMore}    //項目を読み込む際に処理するコールバック関数
-            hasMore={hasMore}      //読み込みを行うかどうかの判定
-            loader={loader}
-          >                       {/* 読み込み最中に表示する項目 */}
-            {items}             {/* 無限スクロールで表示する項目 */}
-          </InfiniteScroll>
+          {ErrorAlert!}
         </div>
       </div>
     </>
+  ) : (
+    <div id="reviewPage">
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
+      <div className="container-fuild container-lg">
+        <InfiniteScroll
+          loadMore={loadMore}    //項目を読み込む際に処理するコールバック関数
+          hasMore={hasMore}      //読み込みを行うかどうかの判定
+          loader={loader}
+        >                       {/* 読み込み最中に表示する項目 */}
+          {items}             {/* 無限スクロールで表示する項目 */}
+        </InfiniteScroll>
+      </div>
+    </div>
   )
 }
 

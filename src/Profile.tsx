@@ -1,6 +1,7 @@
 import { FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import MyReviews from './MyReviews';
+import background from './bg_5.jpg'
 
 type ProfileProps = {
   userName: string | null;
@@ -10,6 +11,10 @@ type ProfileProps = {
 const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const [userInput, setUserInput] = useState<string>('');
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [resStatus, setResStatus] = useState<number>(200);
+
+  let ErrorAlert: ReactElement;
 
   // トークンをコンテキストから取得
   const { userToken } = useContext(AuthorizeContext);
@@ -18,29 +23,54 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const btnRef = useRef<HTMLButtonElement>(null!);
 
   async function update(): Promise<void> {
-    const url = await fetch("https://api-for-missions-and-railways.herokuapp.com/users"
-    , {method: 'PUT', headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),body: JSON.stringify({"name": userInput})}
-    ).then(res => {
-      setUserName(userInput);
-      return res.json();
-    })
-    if (await url.token) {
-    } else {
-      if (await url.ErrorCode) {
-        if (await url.ErrorCode === 400) {
-          console.log(await url.ErrorMessageJP)
-        }
-        else if (await url.ErrorCode === 403) {
-          console.log(await url.ErrorMessageJP)
-        }
-        else if (await url.ErrorCode === 500) {
-          console.log(await url.ErrorMessageJP)
-        }
+    const response = await fetch(
+      'https://api-for-missions-and-railways.herokuapp.com/users',
+      {
+        method: 'PUT',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`}),
+        body: JSON.stringify({"name": userInput})
       }
+    ).then(res => {
+      if (res.ok) {
+        setUserName(userInput);
+        setIsError(false);
+        setResStatus(200);
+        return res.json();
+      }
+      else {
+        setIsError(true);
+        return res.json();
+      }
+    })
+
+    if (await response.ErrorCode === 400) {
+      setResStatus(400);
+    }
+    else if (await response.ErrorCode === 403) {
+      setResStatus(403);
+    }
+    else if (await response.ErrorCode === 500) {
+      setResStatus(500);
     }
   };
 
-  let ErrorAlert: ReactElement;
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (isError) {
+    if (resStatus === 400) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラー：フォームに文字が入力されていません
+        </div>
+      )
+    }
+    else if (resStatus === 403 || resStatus === 500) {
+      ErrorAlert = (
+        <div className="alert alert-warning mt-3" role="alert">
+          エラーが起きました。しばらくしてからもう一度お試しください
+        </div>
+      )
+    }
+  }
 
   useEffect(() => {
     nameRef.current.value = userName!;
@@ -71,7 +101,8 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
 
   return (
     <>
-      <div className="reviewPage-bg" id="profilePage">
+      <div id="profilePage">
+        <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg">
           <div className="mb-3 bg-light card p-3" id="userProfile">
             <div className="d-flex flex-wrap">
@@ -102,7 +133,6 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
               {ErrorAlert!}
             </div>
           </div>
-          {ErrorAlert!}
           <MyReviews />
         </div>
       </div>

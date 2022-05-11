@@ -33,7 +33,7 @@ function Main(): ReactElement {
 
   // 認証トークンを利用してユーザ情報を取得
   async function getUser(): Promise<void> {
-    const userInfo: {name: string} = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
+    const response: {name: string} = await fetch(`https://api-for-missions-and-railways.herokuapp.com/users`,
     {headers: new Headers({ 'Authorization': `Bearer ${authContext.userToken}`})}
     ).then(res => {
       if (res.ok) {
@@ -44,17 +44,22 @@ function Main(): ReactElement {
         setIsError(true);
       }
     });
-    setUserName(userInfo.name);
+
+    if (await response.name) {
+      setUserName(response.name);
+    }
   };
 
   useEffect(()=>{
-    getUser();
+    if (authContext.isAuthorized) {
+      getUser();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   let ErrorAlert: ReactElement = (
     <div className="alert alert-warning mt-5" role="alert">
-      エラーが起きました。しばらくしてからもう一度お試しください。
+      エラーが起きました。しばらくしてからもう一度お試しください
     </div>
   )
 
