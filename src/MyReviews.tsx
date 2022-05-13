@@ -14,10 +14,13 @@ type ReviewType = {
 }
 
 const MyReviews = memo((): ReactElement => {
+  // 表示するレビューのリスト
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
+  // エラー
   const [isError, setIsError] = useState<boolean>(false);
+  // apiからまだ呼び出せるか
   const [hasMore, setHasMore] = useState<boolean>(true);
-
+  //認証トークン 
   const { userToken } = useContext(AuthorizeContext);
 
   // 項目を読み込むときのコールバック
@@ -102,13 +105,7 @@ const MyReviews = memo((): ReactElement => {
       )
     )
   );
-
-  let ErrorAlert: ReactElement = (
-    <div className="alert alert-warning mt-5" role="alert">
-      エラーが起きました。しばらくしてからもう一度お試しください。
-    </div>
-  );
-
+  
   //ロード中に表示する項目
   const loader: ReactElement = (
     <div className="loader" key={0}>
@@ -120,7 +117,9 @@ const MyReviews = memo((): ReactElement => {
     <>
       <div className="reviewPage-bg" id="reviewPage-error">
         <div className="container-fuild container-lg">
-          {ErrorAlert!}
+            <div className="alert alert-warning mt-5" role="alert">
+              エラーが起きました。しばらくしてからもう一度お試しください。
+            </div>
         </div>
       </div>
     </>

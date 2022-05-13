@@ -9,19 +9,24 @@ type ProfileProps = {
 }
 
 const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
+  // プロフィール編集欄に入力された値
   const [userInput, setUserInput] = useState<string>('');
+  // フォームが有効かどうか
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  // エラー
   const [isError, setIsError] = useState<boolean>(false);
+  // fetchに対するresのstatus
   const [resStatus, setResStatus] = useState<number>(200);
-
+  // エラー時のメッセージ
   let ErrorAlert: ReactElement;
-
   // トークンをコンテキストから取得
   const { userToken } = useContext(AuthorizeContext);
-
+  // 名前の編集欄
   const nameRef = useRef<HTMLInputElement>(null!);
+  // プロフィールの変更ボタン
   const btnRef = useRef<HTMLButtonElement>(null!);
 
+  // プロフィールの更新処理
   const update = async(): Promise<void> => {
     await fetch(
       'https://api-for-missions-and-railways.herokuapp.com/users',
@@ -69,6 +74,7 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
     }
   }
 
+  // プロフィール編集欄に初期値を入れる
   useEffect(() => {
     nameRef.current.value = userName!;
   },[userName])
@@ -130,6 +136,7 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
               {ErrorAlert!}
             </div>
           </div>
+          <h2 className="text-white">あなたが投稿したレビュー</h2>
           <MyReviews />
         </div>
       </div>
