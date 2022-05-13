@@ -194,7 +194,7 @@ a {
 }
 
 #loginPage {
-  padding-top: 15vh;
+  padding-top: 10vh;
 }
 
 #reviewPage {
@@ -274,8 +274,17 @@ a {
   text-decoration: underline;
 }
 
-#header-userLink {
+.header-active {
+  color: white;
+  text-decoration: underline;
+}
 
+.header-active:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+#header-userLink {
   border-radius: 20px;
   padding: 5px 10px;
 }
@@ -297,4 +306,14 @@ a {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
+}
+
+.logo-loginPage {
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+.logoText-loginPage {
+  font-size: 4rem;
+  margin-left: 0.5rem;
 }

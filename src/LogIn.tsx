@@ -2,6 +2,7 @@ import { memo, ReactElement, useEffect, useRef, useState, useContext } from 'rea
 import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from "react-router-dom";
 import background from './bg_6.jpg';
+import bookLogo from './bookLogo.svg';
 
 type LoginInputType = {
   email: string,
@@ -9,16 +10,23 @@ type LoginInputType = {
 }
 
 const LogIn = memo((): ReactElement => {
+  // ログインフォームの入力内容
   const [userInput, setUserInput] = useState<LoginInputType>({email: '', password: ''});
+  // フォームが有効かどうか
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  // ログイン処理のエラー
   const [loginError, setLoginError] = useState<boolean>(false);
+  // resのステータス
   const [resStatus, setResStatus] = useState<number>(200);
-
+  // email入力欄
   const emailRef = useRef<HTMLInputElement>(null!);
+  // パスワード入力欄
   const passwordRef = useRef<HTMLInputElement>(null!);
+  // パスワード確認用入力欄
   const loginRef = useRef<HTMLButtonElement>(null!);
-
+  //パスワードが確認用と一致しないときの警告 
   let passwordWarning: ReactElement;
+  // エラー時の警告
   let ErrorAlert: ReactElement;
 
   // 認証コンテキストを使用
@@ -42,6 +50,7 @@ const LogIn = memo((): ReactElement => {
     }
   };
 
+  // ログイン処理
   const login = async(): Promise<void> => {
     const userInfo: object = {
       "email": userInput.email,
@@ -108,6 +117,10 @@ const LogIn = memo((): ReactElement => {
       <div className="signupPage-bg" id="loginPage">
         <img className="bg-books fixed-top" src={background} alt="背景"/>
         <div className="container-fuild container-lg">
+          <div className="d-flex flex-nowrap justify-content-center mb-5">
+            <img src={bookLogo} className="logo-loginPage my-auto" alt="logo" />
+            <h1 className="text-white my-auto logoText-loginPage">Book Review</h1>
+          </div>
           <div className="form" id="login-form">
             <div className="mb-3">
               <input
