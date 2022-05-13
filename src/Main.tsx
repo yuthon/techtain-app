@@ -10,6 +10,7 @@ import NewReview from './NewReview';
 import ReviewDetail from './ReviewDetail';
 import ReviewEdit from './ReviewEdit';
 import Header from './Header';
+import SearchSection from './SearchSection';
 
 const Main = (): ReactElement => {
   
@@ -75,6 +76,7 @@ const Main = (): ReactElement => {
         <Route path="new" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <NewReview />}/>
         <Route path="detail/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewDetail />}/>
         <Route path="edit/:bookId" element={ !authContext.isAuthorized ? <Navigate to="/login"/> : <ReviewEdit />}/>
+        <Route path="search" element={!authContext.isAuthorized ? <Navigate to="/login"/> : <SearchSection />} />
       </Routes>
     </>
   )

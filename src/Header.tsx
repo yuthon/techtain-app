@@ -33,6 +33,9 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
+                  <Link className="header-link" to="/search">レビュー検索</Link>
+                </li>
+                <li className="nav-item my-auto mx-3">
                   <Link className="header-link" to="/">レビュー一覧</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
