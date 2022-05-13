@@ -1,5 +1,6 @@
-import { FC ,ReactElement } from 'react';
-import { Link } from "react-router-dom";
+import { FC ,ReactElement, useContext, useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { AuthorizeContext } from './AuthorizeProvider';
 
 type ReviewType = {
   detail: string,
@@ -16,7 +17,67 @@ type ReviewCardProps = {
 }
 
 const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
+  // 認証トークン
+  const { userToken } = useContext(AuthorizeContext);
+  // エラー
+  const [deleteError, setDeleteError] = useState<boolean>(false);
+  // fetchに対するresのステータス
+  const [resStatus, setResStatus] = useState<number>(200);
+  // リダイレクト用
+  const navigate = useNavigate();
+  // エラー時のメッセージ
+  let ErrorAlert: ReactElement;
+
+  // レビューを削除
+  const deleteReview = async(): Promise<void> => {
+    await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${review.id}`,
+      {
+        method: 'DELETE',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+      }
+    ).then(res => {
+      if (res.ok) {
+        setDeleteError(false);
+        setResStatus(200);
+        // eslint-disable-next-line no-restricted-globals
+        location.reload();
+        navigate('/');
+      }
+      else {
+        setDeleteError(true);
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 403) {
+          setResStatus(403);
+        }
+        else if (res.status === 404) {
+          setResStatus(404);
+        }
+        else {
+          setResStatus(500);
+        }
+      }
+    })
+  };
+
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (deleteError) {
+    if (resStatus === 404) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：投稿が存在しません</div>
+      )
+    }
+    else if (resStatus === 400 || resStatus === 403 || resStatus === 500) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
+      )
+    }
+  }
+
   return review.isMine ? (
+    <>
     <div className="card review-card text-dark bg-light my-3 mx-auto">
       <Link className="card-detailLink" to={`/detail/${review.id}`}></Link> 
       <div className="card-header d-flex justify-content-between">
@@ -37,6 +98,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
             <li><a className="dropdown-item card-link" href={review.url}>書籍へのリンク</a></li>
             <li><Link className="card-link dropdown-item" to={`/detail/${review.id}`}>投稿の詳細</Link></li>
             <li><Link className="card-link dropdown-item" to={`/edit/${review.id}`}>編集</Link></li>
+            <li><p className="card-link dropdown-item m-0" onClick={()=>{deleteReview()}} style={{cursor: "pointer"}}>削除</p></li>
           </ul>
         </div>
       </div>
@@ -59,6 +121,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
           </div>
         </div>
     </div>
+    {ErrorAlert!}
+    </>
   ) : (
     <div className="card review-card text-dark bg-light my-3 mx-auto">
       <Link className="card-detailLink" to={`/detail/${review.id}`}></Link> 

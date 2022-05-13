@@ -1,5 +1,5 @@
 import { FC, ReactElement, useContext } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AuthorizeContext } from './AuthorizeProvider';
 import bookLogo from './bookLogo.svg';
 import userIcon from './userIcon.svg';
@@ -9,9 +9,12 @@ type HeaderProps = {
 }
 
 const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
-
+  // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
+  // routeの変化を検出
+  const location = useLocation();
 
+  // ログアウト処理
   const logOut = (): void => {
     localStorage.removeItem('v_|2Q)iA~*rn%');
     authContext.setUserToken(null);
@@ -33,13 +36,13 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" to="/search">レビュー検索</Link>
+                  <Link className={`${location.pathname === '/search' ? 'header-active' : 'header-link'}`} to="/search">レビュー検索</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" to="/">レビュー一覧</Link>
+                  <Link className={`${location.pathname === '/' ? 'header-active' : 'header-link'}`} to="/">レビュー一覧</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" to="/new">レビュー投稿</Link>
+                  <Link className={`${location.pathname === '/new' ? 'header-active' : 'header-link'}`} to="/new">レビュー投稿</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
                   <Link className="header-link" onClick={()=>{logOut()}} to="/login">ログアウト</Link>
@@ -73,10 +76,10 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" to="/signup">登録</Link>
+                  <Link className={`${location.pathname === '/signup' ? 'header-active' : 'header-link'}`} to="/signup">登録</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" to="/login">ログイン</Link>
+                  <Link className={`${location.pathname === '/login' ? 'header-active' : 'header-link'}`} to="/login">ログイン</Link>
                 </li>
               </ul>
             </div>

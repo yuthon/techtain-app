@@ -132,7 +132,7 @@ const ReviewIndexAuth = memo((): ReactElement => {
       <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
       <div className="container-fuild container-lg">
         <div className="alert alert-warning mt-5" role="alert">
-          エラーが起きました。しばらくしてからもう一度お試しください。
+          エラーが起きました。しばらくしてからもう一度お試しください
         </div>
       </div>
     </div>

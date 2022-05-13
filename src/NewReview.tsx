@@ -11,23 +11,32 @@ type UserInputType = {
 }
 
 const NewReview = memo(():ReactElement => {
+  // 認証トークン
   const { userToken } = useContext(AuthorizeContext);
-
+  // フォームに入力された値
   const [userInput, setUserInput] = useState<UserInputType>({title:'',detail:'',url:'',text:''});
+  // フォームが有効かどうか
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  // fetchに対するresのstatus
   const [resStatus, setResStatus] = useState<number>(200);
+  // エラー
   const [isError, setIsError] = useState<boolean>(false);
-
+  // 書籍のタイトル
   const titleRef = useRef<HTMLInputElement>(null!);
+  // 書籍の詳細
   const detailRef = useRef<HTMLTextAreaElement>(null!);
+  // 書籍のurl
   const urlRef = useRef<HTMLInputElement>(null!);
+  // 書籍のレビュー
   const textRef = useRef<HTMLTextAreaElement>(null!);
+  // 投稿ボタン
   const btnRef = useRef<HTMLButtonElement>(null!);
-
+  // エラー時のメッセージ
   let ErrorAlert: ReactElement;
-
+  // リダイレクト用
   const navigate = useNavigate();
 
+  // 投稿処理
   const submit = async(): Promise<void> => {
     await fetch(
       "https://api-for-missions-and-railways.herokuapp.com/books",
@@ -45,6 +54,7 @@ const NewReview = memo(():ReactElement => {
       if (res.ok) {
         setIsError(false);
         setResStatus(200);
+        //　投稿に成功したらリダイレクト
         navigate('/');
       }
       else {

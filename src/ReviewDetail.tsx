@@ -1,6 +1,6 @@
 import { memo, ReactElement, useEffect, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import background from './bg_5.jpg'
 
 type detailType = {
@@ -14,19 +14,26 @@ type detailType = {
 }
 
 const ReviewDetail = memo(():ReactElement => {
-
+  // エラー
   const [isError, setIsError] = useState<boolean>(false);
+  // 削除時のエラー
+  const [deleteError, setDeleteError] = useState<boolean>(false);
+  // fecthのresのstatus
   const [resStatus, setResStatus] = useState<number>(200);
+  // レビュー
   const [reviewDetail, setReviewDetail] = useState<detailType>({
     id:'',title:'',url:'',detail:'',review:'',reviewer:'',isMine:false
   });
-
+  // 認証トークン
   const { userToken } = useContext(AuthorizeContext);
-
+  // urlから書籍のidを取得
   let { bookId } = useParams<string>();
-
+  // エラー時のメッセージ
   let ErrorAlert: ReactElement;
+  // リダイレクト用
+  const navigate = useNavigate();
 
+  // レビュー取得処理
   const getDetail = async(): Promise<void> => {
     const response: detailType = await fetch(
       `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
@@ -60,6 +67,38 @@ const ReviewDetail = memo(():ReactElement => {
     }
   };
 
+  // レビューの削除処理
+  const deleteReview = async(): Promise<void> => {
+    await fetch(
+      `https://api-for-missions-and-railways.herokuapp.com/books/${bookId}`,
+      {
+        method: 'DELETE',
+        headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+      }
+    ).then(res => {
+      if (res.ok) {
+        setDeleteError(false);
+        setResStatus(200);
+        navigate('/');
+      }
+      else {
+        setDeleteError(true);
+        if (res.status === 400) {
+          setResStatus(400);
+        }
+        else if (res.status === 403) {
+          setResStatus(403);
+        }
+        else if (res.status === 404) {
+          setResStatus(404);
+        }
+        else {
+          setResStatus(500);
+        }
+      }
+    })
+  };
+
   // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
   if (isError) {
     if (resStatus === 404) {
@@ -75,6 +114,20 @@ const ReviewDetail = memo(():ReactElement => {
           エラーが起きました。しばらくしてからもう一度お試しください
         </div>
       );
+    }
+  }
+
+  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
+  if (deleteError) {
+    if (resStatus === 404) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：投稿が存在しません</div>
+      )
+    }
+    else if (resStatus === 400 || resStatus === 403 || resStatus === 500) {
+      ErrorAlert = (
+        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
+      )
     }
   }
 
@@ -106,6 +159,7 @@ const ReviewDetail = memo(():ReactElement => {
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                   <li><a className="dropdown-item card-link" href={reviewDetail.url}>書籍へのリンク</a></li>
                   <li><Link className="card-link dropdown-item" to={`/edit/${reviewDetail.id}`}>編集</Link></li>
+                  <li><p className="card-link dropdown-item m-0" onClick={()=>{deleteReview()}} style={{cursor: "pointer"}}>削除</p></li>
                 </ul>
               </div>
             </div>

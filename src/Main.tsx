@@ -13,10 +13,11 @@ import Header from './Header';
 import SearchSection from './SearchSection';
 
 const Main = (): ReactElement => {
-  
+  // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
-
+  // ユーザーネーム
   const [userName, setUserName] = useState<string | null>(null);
+  // エラー
   const [isError, setIsError] = useState<boolean>(false);
 
   // 認証トークンを利用してユーザ情報を取得
@@ -39,6 +40,7 @@ const Main = (): ReactElement => {
     }
   };
 
+  // ログインしたらユーザー情報を取得
   useEffect(()=>{
     if (authContext.isAuthorized) {
       getUser();
@@ -46,17 +48,13 @@ const Main = (): ReactElement => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[authContext.isAuthorized])
 
-  let ErrorAlert: ReactElement = (
-    <div className="alert alert-warning mt-5" role="alert">
-      エラーが起きました。しばらくしてからもう一度お試しください
-    </div>
-  );
-
   return isError ? (
     <>
       <Header userName={userName} />
       <div className="container pt-5">
-        {ErrorAlert}
+        <div className="alert alert-warning mt-5" role="alert">
+          エラーが起きました。しばらくしてからもう一度お試しください
+        </div>
       </div>
     </>
   ) : (

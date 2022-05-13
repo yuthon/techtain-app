@@ -189,7 +189,7 @@ const SearchSection = (): ReactElement => {
         <input
           className="form-control me-2"
           type="search"
-          placeholder="書籍を検索"
+          placeholder="書籍名で検索"
           aria-label="Search"
           ref={searchRef}
           style={{height: "3rem"}}
