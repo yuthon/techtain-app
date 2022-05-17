@@ -1,8 +1,9 @@
-import { memo, ReactElement, useEffect, useRef, useState, useContext } from 'react';
+import { memo, ReactElement, useRef, useState, useContext } from 'react';
 import { Link } from "react-router-dom";
 import bookLogo from './bookLogo.svg';
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_6.jpg';
+import { signupError } from './ErrorMessages';
 
 type UserInputType = {
   name: string,
@@ -20,18 +21,16 @@ const SignUp = memo((): ReactElement => {
   const [userInput, setUserInput] = useState<UserInputType>({name: '', email: '', password: '', confirm: ''});
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
-  const [signupError, setSignupError] = useState<boolean>(false);
-  const [resStatus, setResStatus] = useState<number>(200);
 
   const nameRef = useRef<HTMLInputElement>(null!);
   const emailRef = useRef<HTMLInputElement>(null!);
   const passwordRef = useRef<HTMLInputElement>(null!);
   const confirmRef = useRef<HTMLInputElement>(null!);
   const submitRef = useRef<HTMLButtonElement>(null!);
-
-  let passwordWarning: ReactElement;
-  let ErrorAlert: ReactElement;
-
+  // エラーメッセージ
+  const ErrorRef = useRef<HTMLDivElement>(null!);
+  // パスワード不一致のメッセージ
+  const passwordWarningRef = useRef<HTMLDivElement>(null!);
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
 
@@ -67,73 +66,67 @@ const SignUp = memo((): ReactElement => {
     }
   };
 
-  const signup = async(): Promise<void> => {
-    const userInfo: object = {
-      "name": userInput.name,
-      "email": userInput.email,
-      "password": userInput.password,
-    }
-
-    const response: responseType = await fetch(
-      'https://api-for-missions-and-railways.herokuapp.com/users',
-      {method: 'POST', body: JSON.stringify(userInfo)}
-    ).then(res => {
-      if (res.ok) {
-        setSignupError(false);
-        setResStatus(200);
-        return res.json();
-      }
-      else {
-        setSignupError(true);
-        if (res.status === 400) {
-          setResStatus(400);
-        }
-        else if (res.status === 403) {
-          setResStatus(403);
-        }
-        else {
-          setResStatus(500);
-        }
-      }
-    })
-    
-    if (response.token) {
-      localStorage.setItem('v_|2Q)iA~*rn%', response.token!);
-      authContext.setUserToken(response.token!);
-      authContext.setIsAuthorized(true);
+  // パスワード確認欄からフォーカスが外れた時にパスワードの一致をチェック
+  const checkPassword = () => {
+    if (!passwordMatch && passwordRef.current.value.length > 0) {
+      confirmRef.current.className = 'form-control is-invalid';
+      passwordWarningRef.current.style.display = 'block';
+    } else if (passwordMatch) {
+      confirmRef.current.className = 'form-control';
+      passwordWarningRef.current.style.display = 'none';
     }
   };
 
-  // コンポーネントのレンダー時にパスワードが確認用と一致するかチェック
-  // 一致しないならメッセージを表示
-  if (!passwordMatch) {
-    passwordWarning = (
-      <div id="emailHelp" className="form-text">パスワードが一致しません</div>
-    );
-  }
-
-  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
-  if (signupError) {
-    if (resStatus === 400) {
-      ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラー：すべてのフォームを埋めてください</div>
-      );
-    }
-    else if (resStatus === 403 || resStatus === 500) {
-      ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
-      );
-    }
-  }
-
-  useEffect(()=>{
-    // フォームが必要な条件を満たすならボタンを有効化
+  const signup = async(): Promise<void> => {
+    // フォームを値をチェックしてから値を送信するか決める
     if (isFormValid) {
-      submitRef.current.disabled = false
-    } else {
-      submitRef.current.disabled = true
+      const userInfo: object = {
+        "name": userInput.name,
+        "email": userInput.email,
+        "password": userInput.password,
+      }
+
+      const response: responseType = await fetch(
+        'https://api-for-missions-and-railways.herokuapp.com/users',
+        {method: 'POST', body: JSON.stringify(userInfo)}
+      ).then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        else {
+          if (res.status === 400) {
+            ErrorRef.current.innerHTML = signupError.code400;
+            ErrorRef.current.style.display = 'block';
+          }
+          else if (res.status === 401) {
+            ErrorRef.current.innerHTML = signupError.code401;
+            ErrorRef.current.style.display = 'block';
+          }
+          else if (res.status === 403) {
+            ErrorRef.current.innerHTML = signupError.code401;
+            ErrorRef.current.style.display = 'block';
+          }
+          else {
+            ErrorRef.current.innerHTML = signupError.code500;
+            ErrorRef.current.style.display = 'block';
+          }
+        }
+      })
+    
+      if (response.token) {
+        localStorage.setItem('v_|2Q)iA~*rn%', response.token!);
+        authContext.setUserToken(response.token!);
+        authContext.setIsAuthorized(true);
+      }
     }
-  })
+    // フォームが必要な条件を満たしていないならメッセージを表示
+    else {
+      if (nameRef.current.value === '' || emailRef.current.value === '' || passwordRef.current.value === '') {
+        ErrorRef.current.innerHTML = signupError.formInvalid;
+        ErrorRef.current.style.display = 'block';
+      }
+    }
+  };
   
   return (
     <div id="signupPage">
@@ -183,9 +176,12 @@ const SignUp = memo((): ReactElement => {
                 className="form-control"
                 ref={confirmRef}
                 onChange={()=>{checkInput()}}
+                onBlur={()=>{checkPassword()}}
                 placeholder="パスワード（確認用）"
               />
-              {passwordWarning!}
+              <div className="errorMessage invalid-feedback mb-0" ref={passwordWarningRef}>
+                パスワードが一致しません
+              </div>
             </div>
             <div className="d-flex flex-wrap justify-content-between" id="signupOrLogin">
               <button
@@ -200,7 +196,8 @@ const SignUp = memo((): ReactElement => {
                 <p id="link-login">ログイン</p>
               </Link>
             </div>
-            {ErrorAlert!}
+            <div id="submit-error" className="errorMessage alert alert-danger mt-3 mb-0" role="alert" ref={ErrorRef}>
+            </div>
           </div>
         </div>
       </div>

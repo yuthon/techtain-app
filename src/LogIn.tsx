@@ -1,8 +1,9 @@
-import { memo, ReactElement, useEffect, useRef, useState, useContext } from 'react';
+import { memo, ReactElement, useRef, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from "react-router-dom";
 import background from './bg_6.jpg';
 import bookLogo from './bookLogo.svg';
+import { loginError } from './ErrorMessages';
 
 type LoginInputType = {
   email: string,
@@ -14,10 +15,6 @@ const LogIn = memo((): ReactElement => {
   const [userInput, setUserInput] = useState<LoginInputType>({email: '', password: ''});
   // フォームが有効かどうか
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  // ログイン処理のエラー
-  const [loginError, setLoginError] = useState<boolean>(false);
-  // resのステータス
-  const [resStatus, setResStatus] = useState<number>(200);
   // email入力欄
   const emailRef = useRef<HTMLInputElement>(null!);
   // パスワード入力欄
@@ -26,8 +23,8 @@ const LogIn = memo((): ReactElement => {
   const loginRef = useRef<HTMLButtonElement>(null!);
   //パスワードが確認用と一致しないときの警告 
   let passwordWarning: ReactElement;
-  // エラー時の警告
-  let ErrorAlert: ReactElement;
+  // エラーメッセージ
+  const ErrorRef = useRef<HTMLDivElement>(null!);
 
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
@@ -52,65 +49,54 @@ const LogIn = memo((): ReactElement => {
 
   // ログイン処理
   const login = async(): Promise<void> => {
-    const userInfo: object = {
-      "email": userInput.email,
-      "password": userInput.password,
-    };
-
-    const response = await fetch(
-      'https://api-for-missions-and-railways.herokuapp.com/signin',
-      {method: 'POST', body: JSON.stringify(userInfo)}
-    ).then(res => {
-      if (res.ok) {
-        setLoginError(false);
-        setResStatus(200);
-        return res.json();
-      }
-      else {
-        setLoginError(true);
-        if (res.status === 400) {
-          setResStatus(400);
-        }
-        else if (res.status === 403) {
-          setResStatus(403);
+    // フォームを値をチェックしてから値を送信するか決める
+    if (isFormValid) {
+      const userInfo: object = {
+        "email": userInput.email,
+        "password": userInput.password,
+      };
+  
+      const response = await fetch(
+        'https://api-for-missions-and-railways.herokuapp.com/signin',
+        {method: 'POST', body: JSON.stringify(userInfo)}
+      ).then(res => {
+        if (res.ok) {
+          return res.json();
         }
         else {
-          setResStatus(500);
+          if (res.status === 400) {
+            ErrorRef.current.innerHTML = loginError.code400;
+            ErrorRef.current.style.display = 'block';
+          }
+          else if (res.status === 401) {
+            ErrorRef.current.innerHTML = loginError.code401;
+            ErrorRef.current.style.display = 'block';
+          }
+          else if (res.status === 403) {
+            ErrorRef.current.innerHTML = loginError.code401;
+            ErrorRef.current.style.display = 'block';
+          }
+          else {
+            ErrorRef.current.innerHTML = loginError.code500;
+            ErrorRef.current.style.display = 'block';
+          }
         }
+      })
+      
+      if (await response.token) {
+        // 認証トークンをローカルストレージに保存
+        // あらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく
+        localStorage.setItem('v_|2Q)iA~*rn%', response.token);
+        authContext.setUserToken(response.token);
+        authContext.setIsAuthorized(true);
       }
-    })
-    
-    if (await response.token) {
-      // 認証トークンをローカルストレージに保存
-      // あらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく
-      localStorage.setItem('v_|2Q)iA~*rn%', response.token);
-      authContext.setUserToken(response.token);
-      authContext.setIsAuthorized(true);
+    }
+    // フォームが必要な条件を満たしていないならメッセージを表示
+    else {
+      ErrorRef.current.innerHTML = loginError.formInvalid;
+      ErrorRef.current.style.display = 'block';
     }
   };
-
-  // エラーが起きたときコンポーネントが再レンダーされるのでエラーメッセージを出す
-  if (loginError) {
-    if (resStatus === 403) {
-      ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">メールアドレスかパスワードが正しくありません</div>
-      );
-    }
-    else if (resStatus === 400 || resStatus === 500) {
-      ErrorAlert = (
-        <div id="submit-error" className="alert alert-danger mt-3 mb-0" role="alert">エラーが起きました。もう一度お試しください</div>
-      );
-    }
-  }
-
-  useEffect(()=>{
-    // フォームが必要な条件を満たすならボタンを有効化
-    if (isFormValid) {
-      loginRef.current.disabled = false
-    } else {
-      loginRef.current.disabled = true
-    }
-  })
 
   return (
     <>
@@ -119,7 +105,7 @@ const LogIn = memo((): ReactElement => {
         <div className="container-fuild container-lg">
           <div className="d-flex flex-nowrap justify-content-center mb-5">
             <img src={bookLogo} className="logo-loginPage my-auto" alt="logo" />
-            <h1 className="text-white my-auto logoText-loginPage">Book Review</h1>
+            <h1 className="text-white my-auto logoText-loginPage text-nowrap">Book Review</h1>
           </div>
           <div className="form" id="login-form">
             <div className="mb-3">
@@ -156,7 +142,8 @@ const LogIn = memo((): ReactElement => {
                 <p id="link-login">登録</p>
               </Link>
             </div>
-            {ErrorAlert!}
+            <div id="submit-error" className="errorMessage alert alert-danger mt-3 mb-0" role="alert" ref={ErrorRef}>
+            </div>
           </div>
         </div>
       </div>

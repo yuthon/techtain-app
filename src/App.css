@@ -317,3 +317,7 @@ a {
   font-size: 4rem;
   margin-left: 0.5rem;
 }
+
+.errorMessage {
+  display: none;
+}
