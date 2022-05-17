@@ -68,8 +68,12 @@ const LogIn = memo((): ReactElement => {
             ErrorRef.current.innerHTML = loginError.code400;
             ErrorRef.current.style.display = 'block';
           }
+          else if (res.status === 401) {
+            ErrorRef.current.innerHTML = loginError.code401;
+            ErrorRef.current.style.display = 'block';
+          }
           else if (res.status === 403) {
-            ErrorRef.current.innerHTML = loginError.code403;
+            ErrorRef.current.innerHTML = loginError.code401;
             ErrorRef.current.style.display = 'block';
           }
           else {
