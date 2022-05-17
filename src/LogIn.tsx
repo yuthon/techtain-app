@@ -3,7 +3,7 @@ import { AuthorizeContext } from './AuthorizeProvider';
 import { Link } from "react-router-dom";
 import background from './bg_6.jpg';
 import bookLogo from './bookLogo.svg';
-import { loginError } from './ErrorMessages'
+import { loginError } from './ErrorMessages';
 
 type LoginInputType = {
   email: string,
