@@ -1,9 +1,9 @@
 import { ReactElement, useContext, useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import './App.css';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
-import ReviewIndexAuth from './ReviewIndex';
+import ReviewIndex from './ReviewIndex';
 import { AuthorizeContext } from './AuthorizeProvider';
 import Profile from './Profile';
 import NewReview from './NewReview';
@@ -17,8 +17,10 @@ const Main = (): ReactElement => {
   const authContext = useContext(AuthorizeContext);
   // ユーザーネーム
   const [userName, setUserName] = useState<string | null>(null);
-  // リダイレクト用
-  const navigate = useNavigate();
+  // 特殊なエラー
+  const [isError, setIsError] = useState<boolean>(false);
+  // ユーザーのページ遷移を検知
+  const location = useLocation();
 
   // 認証トークンを利用してユーザ情報を取得
   async function getUser(): Promise<void> {
@@ -41,12 +43,16 @@ const Main = (): ReactElement => {
         else if (res.status === 500) {
           throw new Error(res.statusText);
         }
+        // 506番など特殊なエラー
         else {
           throw new Error(res.statusText);
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     });
 
     if (response) {
@@ -62,24 +68,36 @@ const Main = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authContext.isAuthorized])
 
+  useEffect(() => {
+    // 特殊なエラーの処理後は必ずログイン画面にリダイレクトするのでそこから別画面に遷移すれば消す
+    if (location.pathname !== '/login') {
+      setIsError(false);
+    }
+  }, [location])
+
   return (
     <>
       <Header userName={userName} />
+      {isError ? (
+        <div className="alert alert-warning mt-3 mx-5" role="alert">
+          エラーが発生しました。しばらくしても改善されない場合はお手数ですが運営までお問い合わせください
+        </div>
+      ) : (null)}
       <Routes>
-        <Route path="signup" element={authContext.isAuthorized ? <Navigate to="/" /> : <SignUp />} />
-        <Route path="login" element={authContext.isAuthorized ? <Navigate to="/" /> : <LogIn />} />
+        <Route path="signup" element={authContext.isAuthorized ? <Navigate to="/" /> : <SignUp setIsError={setIsError} />} />
+        <Route path="login" element={authContext.isAuthorized ? <Navigate to="/" /> : <LogIn setIsError={setIsError} />} />
         {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
-        <Route path="/" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewIndexAuth />} />
+        <Route path="/" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewIndex setIsError={setIsError} />} />
         <Route
           path="profile"
           element={
-            !authContext.isAuthorized ? <Navigate to="/login" /> : <Profile userName={userName} setUserName={setUserName} />
+            !authContext.isAuthorized ? <Navigate to="/login" /> : <Profile userName={userName} setUserName={setUserName} setIsError={setIsError} />
           }
         />
-        <Route path="new" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <NewReview />} />
-        <Route path="detail/:bookId" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewDetail />} />
-        <Route path="edit/:bookId" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewEdit />} />
-        <Route path="search" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <SearchSection />} />
+        <Route path="new" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <NewReview setIsError={setIsError} />} />
+        <Route path="detail/:bookId" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewDetail setIsError={setIsError} />} />
+        <Route path="edit/:bookId" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewEdit setIsError={setIsError} />} />
+        <Route path="search" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <SearchSection setIsError={setIsError} />} />
       </Routes>
     </>
   )

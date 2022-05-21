@@ -1,6 +1,6 @@
-import { memo, ReactElement, useRef, useState, useContext } from 'react';
+import { memo, FC, ReactElement, useRef, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import background from './bg_6.jpg';
 import bookLogo from './bookLogo.svg';
 import { loginError } from './ErrorMessages';
@@ -15,7 +15,11 @@ type responseType = {
   ErrorCode?: number
 }
 
-const LogIn = memo((): ReactElement => {
+type LogInProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const LogIn: FC<LogInProps> = memo(({ setIsError }): ReactElement => {
   // ログインフォームの入力内容
   const [userInput, setUserInput] = useState<LoginInputType>({ email: '', password: '' });
   // フォームが有効かどうか
@@ -32,8 +36,6 @@ const LogIn = memo((): ReactElement => {
   const ErrorRef = useRef<HTMLDivElement>(null!);
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
-  // リダイレクト用
-  const navigate = useNavigate();
 
   const checkInput = (): void => {
     // ユーザーの入力をstateに反映
@@ -91,7 +93,10 @@ const LogIn = memo((): ReactElement => {
           }
         }
       }).catch(error => {
-        navigate('/')
+        localStorage.removeItem('v_|2Q)iA~*rn%');
+        authContext.setUserToken(null);
+        authContext.setIsAuthorized(false);
+        setIsError(true);
       })
 
       if (response) {

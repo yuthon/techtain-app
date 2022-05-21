@@ -1,11 +1,10 @@
-import { ReactElement, useState, useContext, useRef, useEffect } from 'react';
+import { FC, memo, ReactElement, useState, useContext, useRef, useEffect } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import ReviewCard from './ReviewCard';
 import Fuse from 'fuse.js';
 import background from './bg_5.jpg';
 import InfiniteScroll from 'react-infinite-scroller';
 import { getReviewError } from './ErrorMessages';
-import { useNavigate } from 'react-router-dom';
 
 type ReviewType = {
   detail: string,
@@ -27,7 +26,11 @@ const options: object = {
   ]
 };
 
-const SearchSection = (): ReactElement => {
+type SearchSectionProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElement => {
   // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
   // 検索欄
@@ -49,8 +52,6 @@ const SearchSection = (): ReactElement => {
   // Infinite Scrollのkeyプロパティに入れる値
   const key = useRef<number>(1);
   let keyNumber = key.current;
-  // リダイレクト用
-  const navigate = useNavigate();
   // エラーメッセージ
   const ErrorRef = useRef<HTMLDivElement>(null!);
   // 検索結果がなかった時のメッセージ
@@ -81,21 +82,31 @@ const SearchSection = (): ReactElement => {
         return res.json();
       }
       else {
-        if (res.status === 401) {
+        // 400が返ってくる条件が不明
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = getReviewError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 500) {
           ErrorRef.current.innerHTML = getReviewError.code500;
           ErrorRef.current.style.display = 'block';
         }
+        // 506番など特殊なエラー
         else {
           throw new Error(res.statusText);
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
@@ -128,7 +139,7 @@ const SearchSection = (): ReactElement => {
   const items: JSX.Element[] = (
     reviewList.map(
       (review: ReviewType, index: number) => (
-        <ReviewCard review={review} key={index} />
+        <ReviewCard review={review} key={index} setIsError={setIsError} />
       )
     )
   );
@@ -279,6 +290,6 @@ const SearchSection = (): ReactElement => {
       </div>
     </div>
   )
-}
+})
 
 export default SearchSection;

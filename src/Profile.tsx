@@ -3,14 +3,14 @@ import { AuthorizeContext } from './AuthorizeProvider';
 import MyReviews from './MyReviews';
 import background from './bg_5.jpg'
 import { userUpdateError } from './ErrorMessages';
-import { useNavigate } from "react-router-dom";
 
 type ProfileProps = {
   userName: string | null;
   setUserName: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
+const Profile: FC<ProfileProps> = ({ userName, setUserName, setIsError }): ReactElement => {
   // プロフィール編集欄に入力された値
   const [userInput, setUserInput] = useState<string>('');
   // フォームが有効かどうか
@@ -21,10 +21,6 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
   const authContext = useContext(AuthorizeContext);
   // 名前の編集欄
   const nameRef = useRef<HTMLInputElement>(null!);
-  // プロフィールの変更ボタン
-  const btnRef = useRef<HTMLButtonElement>(null!);
-  // リダイレクト用
-  const navigate = useNavigate();
 
   // プロフィールの更新処理
   const update = async (): Promise<void> => {
@@ -50,6 +46,7 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
             localStorage.removeItem('v_|2Q)iA~*rn%');
             authContext.setUserToken(null);
             authContext.setIsAuthorized(false);
+            setIsError(true);
           }
           else if (res.status === 500) {
             ErrorRef.current.innerHTML = userUpdateError.code500;
@@ -60,7 +57,10 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
           }
         }
       }).catch(error => {
-        navigate('/')
+        localStorage.removeItem('v_|2Q)iA~*rn%');
+        authContext.setUserToken(null);
+        authContext.setIsAuthorized(false);
+        setIsError(true);
       })
     }
     // フォームが必要な条件を満たしていないならメッセージを表示
@@ -117,14 +117,14 @@ const Profile: FC<ProfileProps> = ({ userName, setUserName }): ReactElement => {
                 <p className="pt-3">ユーザー名</p>
                 <input type="name" className="form-control" ref={nameRef} onChange={() => { checkInput() }} />
               </div>
-              <button className="btn btn-primary" onClick={() => { update() }} ref={btnRef}>
+              <button className="btn btn-primary" onClick={() => { update() }}>
                 変更
               </button>
               <div className="errorMessage alert alert-danger mt-3 mb-0" ref={ErrorRef}></div>
             </div>
           </div>
           <h2 className="text-white">あなたが投稿したレビュー</h2>
-          <MyReviews />
+          <MyReviews setIsError={setIsError} />
         </div>
       </div>
     </>

@@ -15,9 +15,10 @@ type ReviewType = {
 
 type ReviewCardProps = {
   review: ReviewType;
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, setIsError }): ReactElement => {
   // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
   // リダイレクト用
@@ -42,10 +43,15 @@ const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
       // 400番がどういうときに返ってくるか不明
       // 401番が返ってきたら認証エラーなので再度ログインさせる
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = deleteError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 404) {
           ErrorRef.current.innerHTML = deleteError.code404;
@@ -60,7 +66,10 @@ const ReviewCard: FC<ReviewCardProps> = ({ review }): ReactElement => {
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
   };
 
