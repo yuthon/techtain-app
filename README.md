@@ -1,4 +1,4 @@
-## Deployed at [https://master.dv8b44ybuxvla.amplifyapp.com] ([http://localhost:3000](https://master.dv8b44ybuxvla.amplifyapp.com))
+## Deployed at [https://master.dv8b44ybuxvla.amplifyapp.com] (https://master.dv8b44ybuxvla.amplifyapp.com)
 
 # Getting Started with Create React App
 
