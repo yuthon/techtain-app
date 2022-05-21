@@ -1,8 +1,8 @@
-import { memo, ReactElement, useEffect, useState, useContext, useRef } from 'react';
+import { memo, FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import background from './bg_5.jpg'
-import { deleteError } from './ErrorMessages';
+import { deleteError, getDetailError } from './ErrorMessages';
 
 type detailType = {
   id: string,
@@ -14,7 +14,11 @@ type detailType = {
   isMine: boolean
 }
 
-const ReviewDetail = memo((): ReactElement => {
+type ReviewDetailProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ReviewDetail: FC<ReviewDetailProps> = memo(({ setIsError }): ReactElement => {
   // レビュー
   const [reviewDetail, setReviewDetail] = useState<detailType>({
     id: '', title: '', url: '', detail: '', review: '', reviewer: '', isMine: false
@@ -42,17 +46,33 @@ const ReviewDetail = memo((): ReactElement => {
       // 401番が返ってきたら認証エラーなので再度ログインさせる
       // 500番台はどうすれば？
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = getDetailError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
+        }
+        else if (res.status === 404) {
+          ErrorRef.current.innerHTML = getDetailError.code404;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 500) {
+          ErrorRef.current.innerHTML = getDetailError.code500;
+          ErrorRef.current.style.display = 'block';
         }
         else {
           throw new Error(res.statusText);
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
 
     if (response) {
@@ -73,13 +93,22 @@ const ReviewDetail = memo((): ReactElement => {
         navigate('/');
       }
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = getDetailError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 404) {
           ErrorRef.current.innerHTML = deleteError.code404;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 500) {
+          ErrorRef.current.innerHTML = getDetailError.code500;
           ErrorRef.current.style.display = 'block';
         }
         else {
@@ -87,7 +116,10 @@ const ReviewDetail = memo((): ReactElement => {
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
   };
 

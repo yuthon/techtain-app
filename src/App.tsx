@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import './App.css';
-import  AuthorizeProvider  from './AuthorizeProvider';
+import AuthorizeProvider from './AuthorizeProvider';
 import Main from './Main';
 
 const App = (): ReactElement => {

@@ -1,4 +1,4 @@
-import { memo, ReactElement, useState, useContext, useRef, useEffect } from 'react';
+import { memo, FC, ReactElement, useState, useContext, useRef, useEffect } from 'react';
 import InfiniteScroll from "react-infinite-scroller"
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_5.jpg'
@@ -15,7 +15,11 @@ type ReviewType = {
   url: string,
 }
 
-const ReviewIndexAuth = memo((): ReactElement => {
+type ReviewIndexProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ReviewIndex: FC<ReviewIndexProps> = memo(({ setIsError }): ReactElement => {
   // 表示するリスト
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   //再読み込み判定
@@ -53,22 +57,32 @@ const ReviewIndexAuth = memo((): ReactElement => {
       // 401番が返ってきたら認証エラーなので再度ログインさせる
       // 500番台はどうすれば？
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = getReviewError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 500) {
           ErrorRef.current.innerHTML = getReviewError.code500;
           ErrorRef.current.style.display = 'block';
         }
+        // 506番など特殊なエラー
         else {
           throw new Error(res.statusText);
         }
       }
     }).catch(error => {
-      console.log(error)
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
+
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
       setHasMore(false);
@@ -95,7 +109,7 @@ const ReviewIndexAuth = memo((): ReactElement => {
   const items: JSX.Element[] = (
     reviewList.map(
       (review: ReviewType, index: number) => (
-        <ReviewCard review={review} key={index} />
+        <ReviewCard review={review} key={index} setIsError={setIsError} />
       )
     )
   );
@@ -223,4 +237,4 @@ const ReviewIndexAuth = memo((): ReactElement => {
   )
 })
 
-export default ReviewIndexAuth;
+export default ReviewIndex;

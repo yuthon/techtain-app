@@ -1,5 +1,5 @@
-import { memo, ReactElement, useRef, useState, useContext } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { memo, ReactElement, useRef, useState, useContext, FC } from 'react';
+import { Link } from "react-router-dom";
 import bookLogo from './bookLogo.svg';
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_6.jpg';
@@ -17,16 +17,25 @@ type responseType = {
   ErrorCode?: number
 }
 
-const SignUp = memo((): ReactElement => {
-  const [userInput, setUserInput] = useState<UserInputType>({ name: '', email: '', password: '', confirm: '' });
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+type SignUpProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
 
+const SignUp: FC<SignUpProps> = memo(({ setIsError }): ReactElement => {
+  // ユーザーの入力
+  const [userInput, setUserInput] = useState<UserInputType>({ name: '', email: '', password: '', confirm: '' });
+  // フォームのバリデーション
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  // パスワード確認の一致
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+  // 名前
   const nameRef = useRef<HTMLInputElement>(null!);
+  // Eメール
   const emailRef = useRef<HTMLInputElement>(null!);
+  // パスワード
   const passwordRef = useRef<HTMLInputElement>(null!);
+  // パスワード確認用
   const confirmRef = useRef<HTMLInputElement>(null!);
-  const submitRef = useRef<HTMLButtonElement>(null!);
   // エラーメッセージ
   const ErrorRef = useRef<HTMLDivElement>(null!);
   // パスワード不一致のメッセージ
@@ -35,8 +44,6 @@ const SignUp = memo((): ReactElement => {
   const emailWarningRef = useRef<HTMLDivElement>(null!);
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
-  // リダイレクト用
-  const navigate = useNavigate();
 
   const checkInput = (): void => {
     // ユーザーの入力をstateに反映
@@ -135,20 +142,20 @@ const SignUp = memo((): ReactElement => {
             ErrorRef.current.innerHTML = signupError.code401;
             ErrorRef.current.style.display = 'block';
           }
-          else if (res.status === 403) {
-            ErrorRef.current.innerHTML = signupError.code401;
-            ErrorRef.current.style.display = 'block';
-          }
           else if (res.status === 500) {
             ErrorRef.current.innerHTML = signupError.code500;
             ErrorRef.current.style.display = 'block';
           }
+          // 506番など特殊なエラー
           else {
             throw new Error(res.statusText);
           }
         }
       }).catch(error => {
-        navigate('/')
+        localStorage.removeItem('v_|2Q)iA~*rn%');
+        authContext.setUserToken(null);
+        authContext.setIsAuthorized(false);
+        setIsError(true);
       })
 
       if (response) {
@@ -231,7 +238,6 @@ const SignUp = memo((): ReactElement => {
               <button
                 className="btn btn-primary"
                 id="btn-register" onClick={() => { signup() }}
-                ref={submitRef}
               >
                 登録
               </button>
