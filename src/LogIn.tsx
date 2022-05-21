@@ -1,6 +1,6 @@
 import { memo, ReactElement, useRef, useState, useContext } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import background from './bg_6.jpg';
 import bookLogo from './bookLogo.svg';
 import { loginError } from './ErrorMessages';
@@ -10,9 +10,14 @@ type LoginInputType = {
   password: string
 }
 
+type responseType = {
+  token?: string,
+  ErrorCode?: number
+}
+
 const LogIn = memo((): ReactElement => {
   // ログインフォームの入力内容
-  const [userInput, setUserInput] = useState<LoginInputType>({email: '', password: ''});
+  const [userInput, setUserInput] = useState<LoginInputType>({ email: '', password: '' });
   // フォームが有効かどうか
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   // email入力欄
@@ -25,9 +30,10 @@ const LogIn = memo((): ReactElement => {
   let passwordWarning: ReactElement;
   // エラーメッセージ
   const ErrorRef = useRef<HTMLDivElement>(null!);
-
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
+  // リダイレクト用
+  const navigate = useNavigate();
 
   const checkInput = (): void => {
     // ユーザーの入力をstateに反映
@@ -48,17 +54,17 @@ const LogIn = memo((): ReactElement => {
   };
 
   // ログイン処理
-  const login = async(): Promise<void> => {
+  const login = async (): Promise<void> => {
     // フォームを値をチェックしてから値を送信するか決める
     if (isFormValid) {
       const userInfo: object = {
         "email": userInput.email,
         "password": userInput.password,
       };
-  
-      const response = await fetch(
+      // API問い合わせ
+      const response: responseType = await fetch(
         'https://api-for-missions-and-railways.herokuapp.com/signin',
-        {method: 'POST', body: JSON.stringify(userInfo)}
+        { method: 'POST', body: JSON.stringify(userInfo) }
       ).then(res => {
         if (res.ok) {
           return res.json();
@@ -76,18 +82,23 @@ const LogIn = memo((): ReactElement => {
             ErrorRef.current.innerHTML = loginError.code401;
             ErrorRef.current.style.display = 'block';
           }
-          else {
+          else if (res.status === 500) {
             ErrorRef.current.innerHTML = loginError.code500;
             ErrorRef.current.style.display = 'block';
           }
+          else {
+            throw new Error(res.statusText);
+          }
         }
+      }).catch(error => {
+        navigate('/')
       })
-      
-      if (await response.token) {
+
+      if (response) {
         // 認証トークンをローカルストレージに保存
         // あらゆるJavaScriptで書かれたコードから自由にアクセスできてしまうので、念のため項目の名前を不明瞭にし、悪意のあるコードが認証トークンにアクセスしづらくなるようにしておく
-        localStorage.setItem('v_|2Q)iA~*rn%', response.token);
-        authContext.setUserToken(response.token);
+        localStorage.setItem('v_|2Q)iA~*rn%', response.token!);
+        authContext.setUserToken(response.token!);
         authContext.setIsAuthorized(true);
       }
     }
@@ -101,7 +112,7 @@ const LogIn = memo((): ReactElement => {
   return (
     <>
       <div className="signupPage-bg" id="loginPage">
-        <img className="bg-books fixed-top" src={background} alt="背景"/>
+        <img className="bg-books fixed-top" src={background} alt="背景" />
         <div className="container-fuild container-lg">
           <div className="d-flex flex-nowrap justify-content-center mb-5">
             <img src={bookLogo} className="logo-loginPage my-auto" alt="logo" />
@@ -114,7 +125,7 @@ const LogIn = memo((): ReactElement => {
                 className="form-control"
                 aria-describedby="emailHelp"
                 ref={emailRef}
-                onChange={()=>{checkInput()}}
+                onChange={() => { checkInput() }}
                 placeholder="Eメール"
               />
             </div>
@@ -123,7 +134,7 @@ const LogIn = memo((): ReactElement => {
                 type="password"
                 className="form-control"
                 ref={passwordRef}
-                onChange={()=>{checkInput()}}
+                onChange={() => { checkInput() }}
                 placeholder="パスワード"
               />
               {passwordWarning!}
@@ -132,7 +143,7 @@ const LogIn = memo((): ReactElement => {
               <button
                 className="btn btn-primary"
                 id="btn-register"
-                onClick={()=>{login()}}
+                onClick={() => { login() }}
                 ref={loginRef}
               >
                 ログイン

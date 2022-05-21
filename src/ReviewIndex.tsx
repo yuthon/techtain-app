@@ -1,8 +1,9 @@
 import { memo, ReactElement, useState, useContext, useRef, useEffect } from 'react';
-import InfiniteScroll  from "react-infinite-scroller"
+import InfiniteScroll from "react-infinite-scroller"
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_5.jpg'
 import ReviewCard from './ReviewCard';
+import { getReviewError } from './ErrorMessages';
 
 type ReviewType = {
   detail: string,
@@ -19,10 +20,8 @@ const ReviewIndexAuth = memo((): ReactElement => {
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   //再読み込み判定
   const [hasMore, setHasMore] = useState<boolean>(true);
-  // エラー判定
-  const [isError, setIsError] = useState<boolean>(false);
-  // 認証トークン
-  const { userToken } = useContext(AuthorizeContext);
+  // 認証コンテキスト
+  const authContext = useContext(AuthorizeContext);
   // チェックボックス
   const checkLinkRef = useRef<HTMLInputElement>(null!);
   const checkCountRef = useRef<HTMLInputElement>(null!);
@@ -31,6 +30,8 @@ const ReviewIndexAuth = memo((): ReactElement => {
   // フィルタリング判定
   const [validLinkNeeded, setValidLinkNeeded] = useState<boolean>(false);
   const [characterCountNeeded, setCharacterCountNeeded] = useState<boolean>(false);
+  // エラーメッセージ
+  const ErrorRef = useRef<HTMLDivElement>(null!);
   // Infinite Scrollのkeyプロパティに入れる値
   const key = useRef<number>(1);
   let keyNumber = key.current;
@@ -39,21 +40,35 @@ const ReviewIndexAuth = memo((): ReactElement => {
   const loadMore = async (offset: number): Promise<void> => {
     // api呼び出し
     let response: Array<ReviewType> = await fetch(
-      `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset*10-10}`,
+      `https://api-for-missions-and-railways.herokuapp.com/books?offset=${offset * 10 - 10}`,
       {
         method: 'GET',
-        headers: new Headers({ 'Authorization': `Bearer ${userToken}`})
+        headers: new Headers({ 'Authorization': `Bearer ${authContext.userToken}` })
       }
     ).then(res => {
       if (res.ok) {
-        setIsError(false);
         return res.json();
       }
+      // 400番がどういうときに返ってくるか不明
+      // 401番が返ってきたら認証エラーなので再度ログインさせる
+      // 500番台はどうすれば？
       else {
-        setIsError(true);
+        if (res.status === 401) {
+          localStorage.removeItem('v_|2Q)iA~*rn%');
+          authContext.setUserToken(null);
+          authContext.setIsAuthorized(false);
+        }
+        else if (res.status === 500) {
+          ErrorRef.current.innerHTML = getReviewError.code500;
+          ErrorRef.current.style.display = 'block';
+        }
+        else {
+          throw new Error(res.statusText);
+        }
       }
+    }).catch(error => {
+      console.log(error)
     })
-
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
       setHasMore(false);
@@ -61,13 +76,13 @@ const ReviewIndexAuth = memo((): ReactElement => {
     }
     // フィルタリングがONになっている場合
     if (validLinkNeeded) {
-      response = response.filter((review: ReviewType)=>{
+      response = response.filter((review: ReviewType) => {
         // httpという文字列を含んでいれば有効なurlとみなす
         return review.url.includes('http')
       })
     }
     if (characterCountNeeded) {
-      response = response.filter((review: ReviewType)=>{
+      response = response.filter((review: ReviewType) => {
         // 入力欄の値を整数にして比較
         return review.review.length > parseInt(characterCountRef.current.value)
       })
@@ -93,7 +108,7 @@ const ReviewIndexAuth = memo((): ReactElement => {
   );
 
   // フィルタリング
-  const filter = async() => {
+  const filter = async () => {
     // チェックボックスの状態に基づいてstateの更新
     if (checkLinkRef.current.checked) {
       setValidLinkNeeded(true);
@@ -117,29 +132,21 @@ const ReviewIndexAuth = memo((): ReactElement => {
   const onlyAllowNumber = () => {
     characterCountRef.current.value = (
       characterCountRef.current.value
-      .replace(/[^0-9.]/g, '')
-      .replace(/(\..*)\./g, '$1')
+        .replace(/[^0-9.]/g, '')
+        .replace(/(\..*)\./g, '$1')
     )
   };
 
   // 文字数入力欄の初期値
-  useEffect(()=> {
+  useEffect(() => {
     characterCountRef.current.value = "50"
-  },[])
+  }, [])
 
-  return isError ? (
-    <div id="reviewPage-error">
-      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
-      <div className="container-fuild container-lg">
-        <div className="alert alert-warning mt-5" role="alert">
-          エラーが起きました。しばらくしてからもう一度お試しください
-        </div>
-      </div>
-    </div>
-  ) : (
+  return (
     <div id="reviewPage">
-      <img className="bg-bookshelf fixed-top" src={background} alt="背景"/>
+      <img className="bg-bookshelf fixed-top" src={background} alt="背景" />
       <div className="container-fuild container-lg">
+        <div className="errorMessage alert alert-warning mt-3" ref={ErrorRef} role="alert"></div>
         <button
           className="btn btn-secondary filter-btn"
           type="button"
@@ -183,16 +190,16 @@ const ReviewIndexAuth = memo((): ReactElement => {
               <input
                 className="form-control"
                 ref={characterCountRef}
-                onChange={()=>{onlyAllowNumber()}}
+                onChange={() => { onlyAllowNumber() }}
                 placeholder="半角数字"
-                style={{width:"6rem", height: "2.25rem"}}
+                style={{ width: "6rem", height: "2.25rem" }}
               />
               <p className="my-auto ms-2">文字以上</p>
             </div>
             <button
               className="btn btn-sm btn-primary"
-              style={{width: "3.5rem"}}
-              onClick={()=>{filter()}}
+              style={{ width: "3.5rem" }}
+              onClick={() => { filter() }}
             >
               適用
             </button>
@@ -206,9 +213,9 @@ const ReviewIndexAuth = memo((): ReactElement => {
         <InfiniteScroll
           key={key.current}
           loadMore={loadMore}
-          hasMore={hasMore}      
+          hasMore={hasMore}
           loader={loader}
-        >                       
+        >
           {items}
         </InfiniteScroll>
       </div>
