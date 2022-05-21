@@ -1,4 +1,4 @@
-import { memo, ReactElement, useContext, useEffect, useState, useRef } from 'react';
+import { memo, FC, ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import { useParams, useNavigate } from "react-router-dom";
 import background from './bg_5.jpg'
@@ -21,7 +21,11 @@ type detailType = {
   isMine: boolean
 }
 
-const ReviewEdit = memo((): ReactElement => {
+type ReviewEditProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ReviewEdit: FC<ReviewEditProps> = memo(({ setIsError }): ReactElement => {
   // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
   let { bookId } = useParams<string>();
@@ -36,8 +40,6 @@ const ReviewEdit = memo((): ReactElement => {
   const detailRef = useRef<HTMLTextAreaElement>(null!);
   const urlRef = useRef<HTMLInputElement>(null!);
   const textRef = useRef<HTMLTextAreaElement>(null!);
-  const btnRef = useRef<HTMLButtonElement>(null!);
-  const deleteBtnRef = useRef<HTMLButtonElement>(null!);
   // エラーメッセージ
   const ErrorRef = useRef<HTMLDivElement>(null!);
 
@@ -72,6 +74,11 @@ const ReviewEdit = memo((): ReactElement => {
             localStorage.removeItem('v_|2Q)iA~*rn%');
             authContext.setUserToken(null);
             authContext.setIsAuthorized(false);
+            setIsError(true);
+          }
+          else if (res.status === 404) {
+            ErrorRef.current.innerHTML = editError.code404;
+            ErrorRef.current.style.display = 'block';
           }
           else if (res.status === 500) {
             ErrorRef.current.innerHTML = editError.code500;
@@ -82,10 +89,12 @@ const ReviewEdit = memo((): ReactElement => {
           }
         }
       }).catch(error => {
-        navigate('/')
+        localStorage.removeItem('v_|2Q)iA~*rn%');
+        authContext.setUserToken(null);
+        authContext.setIsAuthorized(false);
+        setIsError(true);
       })
     }
-
   };
 
   // レビュー詳細を取得
@@ -98,10 +107,15 @@ const ReviewEdit = memo((): ReactElement => {
         return res.json();
       }
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = getDetailError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 404) {
           ErrorRef.current.innerHTML = getDetailError.code404;
@@ -116,7 +130,10 @@ const ReviewEdit = memo((): ReactElement => {
         }
       }
     }).catch(error => {
-      navigate('/')
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
 
     if (response) {
@@ -137,10 +154,15 @@ const ReviewEdit = memo((): ReactElement => {
         navigate('/');
       }
       else {
-        if (res.status === 401) {
+        if (res.status === 400) {
+          ErrorRef.current.innerHTML = deleteError.code400;
+          ErrorRef.current.style.display = 'block';
+        }
+        else if (res.status === 401) {
           localStorage.removeItem('v_|2Q)iA~*rn%');
           authContext.setUserToken(null);
           authContext.setIsAuthorized(false);
+          setIsError(true);
         }
         else if (res.status === 404) {
           ErrorRef.current.innerHTML = deleteError.code404;
@@ -154,6 +176,11 @@ const ReviewEdit = memo((): ReactElement => {
           throw new Error(res.statusText);
         }
       }
+    }).catch(error => {
+      localStorage.removeItem('v_|2Q)iA~*rn%');
+      authContext.setUserToken(null);
+      authContext.setIsAuthorized(false);
+      setIsError(true);
     })
   };
 
@@ -238,7 +265,6 @@ const ReviewEdit = memo((): ReactElement => {
           <button
             className="btn btn-primary d-grid gap-2 col-6"
             onClick={() => { save() }}
-            ref={btnRef}
           >
             保存
           </button>
@@ -246,7 +272,6 @@ const ReviewEdit = memo((): ReactElement => {
           <button
             className="btn btn-danger d-grid gap-2 col-3"
             onClick={() => { deleteReview() }}
-            ref={deleteBtnRef}
           >
             レビューの削除
           </button>

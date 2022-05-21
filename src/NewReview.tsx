@@ -1,4 +1,4 @@
-import { memo, ReactElement, useContext, useState, useRef } from 'react';
+import { memo, FC, ReactElement, useContext, useState, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import background from './bg_5.jpg'
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,11 @@ type UserInputType = {
   text: string
 }
 
-const NewReview = memo((): ReactElement => {
+type NewReviewProps = {
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const NewReview: FC<NewReviewProps> = memo(({ setIsError }): ReactElement => {
   // 認証コンテキスト
   const authContext = useContext(AuthorizeContext);
   // フォームに入力された値
@@ -26,8 +30,6 @@ const NewReview = memo((): ReactElement => {
   const urlRef = useRef<HTMLInputElement>(null!);
   // 書籍のレビュー
   const textRef = useRef<HTMLTextAreaElement>(null!);
-  // 投稿ボタン
-  const btnRef = useRef<HTMLButtonElement>(null!);
   // リダイレクト用
   const navigate = useNavigate();
   // エラーメッセージ
@@ -64,6 +66,7 @@ const NewReview = memo((): ReactElement => {
             localStorage.removeItem('v_|2Q)iA~*rn%');
             authContext.setUserToken(null);
             authContext.setIsAuthorized(false);
+            setIsError(true);
           }
           else if (res.status === 500) {
             ErrorRef.current.innerHTML = newReviewError.code500;
@@ -74,7 +77,10 @@ const NewReview = memo((): ReactElement => {
           }
         }
       }).catch(error => {
-        navigate('/')
+        localStorage.removeItem('v_|2Q)iA~*rn%');
+        authContext.setUserToken(null);
+        authContext.setIsAuthorized(false);
+        setIsError(true);
       })
     }
     // フォームが必要な条件を満たしていないならメッセージを表示
@@ -148,7 +154,6 @@ const NewReview = memo((): ReactElement => {
           <button
             className="btn btn-primary"
             onClick={() => { submit() }}
-            ref={btnRef}
           >
             レビューを投稿
           </button>
