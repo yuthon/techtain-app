@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import './App.css';
+import '../stylesheets/App.css';
 import AuthorizeProvider from './AuthorizeProvider';
 import Main from './Main';
 

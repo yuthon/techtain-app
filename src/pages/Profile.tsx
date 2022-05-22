@@ -1,8 +1,8 @@
 import { FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from '../components/AuthorizeProvider';
 import MyReviews from '../components/MyReviews';
-import background from './bg_5.jpg'
-import { userUpdateError } from '../assets/ErrorMessages';
+import background from '../assets/bg_5.jpg'
+import { userUpdateError } from '../utils/ErrorMessages';
 
 type ProfileProps = {
   userName: string | null;

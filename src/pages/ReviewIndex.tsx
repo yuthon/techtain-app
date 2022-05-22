@@ -1,9 +1,9 @@
 import { memo, FC, ReactElement, useState, useContext, useRef, useEffect } from 'react';
 import InfiniteScroll from "react-infinite-scroller"
 import { AuthorizeContext } from '../components/AuthorizeProvider';
-import background from './bg_5.jpg'
+import background from '../assets/bg_5.jpg'
 import ReviewCard from '../components/ReviewCard';
-import { getReviewError } from '../assets/ErrorMessages';
+import { getReviewError } from '../utils/ErrorMessages';
 
 type ReviewType = {
   detail: string,

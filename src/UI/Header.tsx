@@ -1,8 +1,8 @@
 import { FC, ReactElement, useContext } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { AuthorizeContext } from '../components/AuthorizeProvider';
-import bookLogo from './bookLogo.svg';
-import userIcon from './userIcon.svg';
+import bookLogo from '../assets/bookLogo.svg';
+import userIcon from '../assets/userIcon.svg';
 
 type HeaderProps = {
   userName: string | null;

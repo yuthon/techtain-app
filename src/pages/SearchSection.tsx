@@ -2,9 +2,9 @@ import { FC, memo, ReactElement, useState, useContext, useRef, useEffect } from 
 import { AuthorizeContext } from '../components/AuthorizeProvider';
 import ReviewCard from '../components/ReviewCard';
 import Fuse from 'fuse.js';
-import background from './bg_5.jpg';
+import background from '../assets/bg_5.jpg';
 import InfiniteScroll from 'react-infinite-scroller';
-import { getReviewError } from '../assets/ErrorMessages';
+import { getReviewError } from '../utils/ErrorMessages';
 
 type ReviewType = {
   detail: string,

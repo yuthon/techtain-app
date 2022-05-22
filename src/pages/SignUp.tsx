@@ -1,9 +1,9 @@
 import { memo, ReactElement, useRef, useState, useContext, FC } from 'react';
 import { Link } from "react-router-dom";
-import bookLogo from './bookLogo.svg';
+import bookLogo from '../assets/bookLogo.svg';
 import { AuthorizeContext } from '../components/AuthorizeProvider';
-import background from './bg_6.jpg';
-import { signupError } from '../assets/ErrorMessages';
+import background from '../assets/bg_6.jpg';
+import { signupError } from '../utils/ErrorMessages';
 
 type UserInputType = {
   name: string,

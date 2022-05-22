@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import './App.css';
 import SignUp from '../pages/SignUp';
 import LogIn from '../pages/LogIn';
 import ReviewIndex from '../pages/ReviewIndex';
@@ -9,7 +8,7 @@ import Profile from '../pages/Profile';
 import NewReview from '../pages/NewReview';
 import ReviewDetail from '../pages/ReviewDetail';
 import ReviewEdit from '../pages/ReviewEdit';
-import Header from '../pages/Header';
+import Header from '../UI/Header';
 import SearchSection from '../pages/SearchSection';
 
 const Main = (): ReactElement => {

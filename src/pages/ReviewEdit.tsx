@@ -1,8 +1,8 @@
 import { memo, FC, ReactElement, useContext, useEffect, useState, useRef } from 'react';
 import { AuthorizeContext } from '../components/AuthorizeProvider';
 import { useParams, useNavigate } from "react-router-dom";
-import background from './bg_5.jpg'
-import { getDetailError, deleteError, editError } from '../assets/ErrorMessages';
+import background from '../assets/bg_5.jpg'
+import { getDetailError, deleteError, editError } from '../utils/ErrorMessages';
 
 type UserInputType = {
   title: string,
