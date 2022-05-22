@@ -1,7 +1,7 @@
 import { FC, ReactElement, useContext, useRef } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { AuthorizeContext } from './AuthorizeProvider';
-import { deleteError } from './ErrorMessages';
+import { deleteError } from '../assets/ErrorMessages';
 
 type ReviewType = {
   detail: string,

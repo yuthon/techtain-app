@@ -1,10 +1,9 @@
-import { FC, memo, ReactElement, useState, useContext, useRef, useEffect } from 'react';
-import { AuthorizeContext } from './AuthorizeProvider';
-import ReviewCard from './ReviewCard';
-import Fuse from 'fuse.js';
-import background from './bg_5.jpg';
-import InfiniteScroll from 'react-infinite-scroller';
-import { getReviewError } from './ErrorMessages';
+import { memo, FC, ReactElement, useState, useContext, useRef, useEffect } from 'react';
+import InfiniteScroll from "react-infinite-scroller"
+import { AuthorizeContext } from '../components/AuthorizeProvider';
+import background from './bg_5.jpg'
+import ReviewCard from '../components/ReviewCard';
+import { getReviewError } from '../assets/ErrorMessages';
 
 type ReviewType = {
   detail: string,
@@ -16,31 +15,17 @@ type ReviewType = {
   url: string,
 }
 
-// Fuseを使った検索のオプション
-const options: object = {
-  findAllMatches: true,
-  minMatchCharLength: 2,
-  threshold: 0.4,
-  keys: [
-    'title'
-  ]
-};
-
-type SearchSectionProps = {
+type ReviewIndexProps = {
   setIsError: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElement => {
-  // 認証コンテキスト
-  const authContext = useContext(AuthorizeContext);
-  // 検索欄
-  const searchRef = useRef<HTMLInputElement>(null!);
-  // 検索されたかどうか
-  const [isSearched, setIsSearched] = useState<boolean>(false);
+const ReviewIndex: FC<ReviewIndexProps> = memo(({ setIsError }): ReactElement => {
   // 表示するリスト
   const [reviewList, setReviewList] = useState<Array<ReviewType>>([]);
   //再読み込み判定
   const [hasMore, setHasMore] = useState<boolean>(true);
+  // 認証コンテキスト
+  const authContext = useContext(AuthorizeContext);
   // チェックボックス
   const checkLinkRef = useRef<HTMLInputElement>(null!);
   const checkCountRef = useRef<HTMLInputElement>(null!);
@@ -49,24 +34,11 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
   // フィルタリング判定
   const [validLinkNeeded, setValidLinkNeeded] = useState<boolean>(false);
   const [characterCountNeeded, setCharacterCountNeeded] = useState<boolean>(false);
+  // エラーメッセージ
+  const ErrorRef = useRef<HTMLDivElement>(null!);
   // Infinite Scrollのkeyプロパティに入れる値
   const key = useRef<number>(1);
   let keyNumber = key.current;
-  // エラーメッセージ
-  const ErrorRef = useRef<HTMLDivElement>(null!);
-  // 検索結果がなかった時のメッセージ
-  let noResultsMessage: ReactElement;
-
-  // 検索機能
-  const search = () => {
-    setIsSearched(true);
-    // keyプロパティに代入する値を変化させてinfinite scrollerをリセットさせる
-    key.current = keyNumber + 1;
-    // 一度配列を初期化
-    setReviewList([]);
-    // setHasMoreがfalseになっているかもしないので再設定
-    setHasMore(true);
-  }
 
   //項目を読み込むときのコールバック
   const loadMore = async (offset: number): Promise<void> => {
@@ -81,8 +53,10 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
       if (res.ok) {
         return res.json();
       }
+      // 400番がどういうときに返ってくるか不明
+      // 401番が返ってきたら認証エラーなので再度ログインさせる
+      // 500番台はどうすれば？
       else {
-        // 400が返ってくる条件が不明
         if (res.status === 400) {
           ErrorRef.current.innerHTML = getReviewError.code400;
           ErrorRef.current.style.display = 'block';
@@ -108,16 +82,12 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
       authContext.setIsAuthorized(false);
       setIsError(true);
     })
+
     //データ件数が0件の場合、処理終了
     if (response.length < 1) {
       setHasMore(false);
       return;
     }
-    // Fuseを使ってapiから返ってきた配列を検索
-    const fuse = new Fuse(response, options);
-    let results: Fuse.FuseResult<ReviewType>[] = fuse.search(searchRef.current.value);
-    // itemの項だけを抽出してreviewだけを取り出す
-    response = results.map(result => result.item);
     // フィルタリングがONになっている場合
     if (validLinkNeeded) {
       response = response.filter((review: ReviewType) => {
@@ -133,7 +103,7 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
     }
     //取得データをリストに追加
     setReviewList([...reviewList, ...response]);
-  };
+  }
 
   //各スクロール要素
   const items: JSX.Element[] = (
@@ -164,13 +134,13 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
     } else {
       setCharacterCountNeeded(false);
     }
+    // keyプロパティに代入する値を変化させてinfinite scrollerをリセットさせる
+    key.current = keyNumber + 1;
     // 一度配列を初期化
     setReviewList([]);
     // setHasMoreがfalseになっているかもしないので再設定
     setHasMore(true);
-    // keyプロパティに代入する値を変化させてinfinite scrollerをリセットさせる
-    key.current = keyNumber + 1;
-  };
+  }
 
   // 文字数入力欄を半角数字に限定
   const onlyAllowNumber = () => {
@@ -184,43 +154,15 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
   // 文字数入力欄の初期値
   useEffect(() => {
     characterCountRef.current.value = "50"
-    setIsSearched(false);
   }, [])
-
-  // 表示するレビューがないとき
-  if (reviewList.length < 1 && !hasMore) {
-    noResultsMessage = (
-      <div className="alert alert-warning mt-5" role="alert">
-        レビューが見つかりませんでした
-      </div>
-    )
-  }
 
   return (
     <div id="reviewPage">
       <img className="bg-bookshelf fixed-top" src={background} alt="背景" />
       <div className="container-fuild container-lg">
         <div className="errorMessage alert alert-warning mt-3" ref={ErrorRef} role="alert"></div>
-        <div className="d-flex">
-          <input
-            className="form-control me-2"
-            type="search"
-            placeholder="書籍名で検索"
-            aria-label="Search"
-            ref={searchRef}
-            style={{ height: "3rem" }}
-          />
-          <button
-            className="btn btn-success"
-            type="submit"
-            onClick={() => { search() }}
-            style={{ width: "5rem" }}
-          >
-            検索
-          </button>
-        </div>
         <button
-          className="btn btn-secondary filter-btn mt-3"
+          className="btn btn-secondary filter-btn"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#filter-menu"
@@ -277,19 +219,22 @@ const SearchSection: FC<SearchSectionProps> = memo(({ setIsError }): ReactElemen
             </button>
           </div>
         </div>
-        {noResultsMessage!}
-        {isSearched ? (
-          <InfiniteScroll
-            key={key.current}
-            loadMore={loadMore}
-            hasMore={hasMore}
-            loader={loader}
-          >
-            {items}
-          </InfiniteScroll>) : (null)}
+        {reviewList.length < 1 && !hasMore ? (
+          <div className="alert alert-warning mt-5" role="alert">
+            レビューが見つかりませんでした
+          </div>
+        ) : (null)}
+        <InfiniteScroll
+          key={key.current}
+          loadMore={loadMore}
+          hasMore={hasMore}
+          loader={loader}
+        >
+          {items}
+        </InfiniteScroll>
       </div>
     </div>
   )
 })
 
-export default SearchSection;
+export default ReviewIndex;

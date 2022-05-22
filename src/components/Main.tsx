@@ -1,16 +1,16 @@
 import { ReactElement, useContext, useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import './App.css';
-import SignUp from './SignUp';
-import LogIn from './LogIn';
-import ReviewIndex from './ReviewIndex';
+import SignUp from '../pages/SignUp';
+import LogIn from '../pages/LogIn';
+import ReviewIndex from '../pages/ReviewIndex';
 import { AuthorizeContext } from './AuthorizeProvider';
-import Profile from './Profile';
-import NewReview from './NewReview';
-import ReviewDetail from './ReviewDetail';
-import ReviewEdit from './ReviewEdit';
-import Header from './Header';
-import SearchSection from './SearchSection';
+import Profile from '../pages/Profile';
+import NewReview from '../pages/NewReview';
+import ReviewDetail from '../pages/ReviewDetail';
+import ReviewEdit from '../pages/ReviewEdit';
+import Header from '../pages/Header';
+import SearchSection from '../pages/SearchSection';
 
 const Main = (): ReactElement => {
   // 認証コンテキスト

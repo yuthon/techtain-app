@@ -1,8 +1,8 @@
 import { memo, FC, ReactElement, useEffect, useState, useContext, useRef } from 'react';
-import { AuthorizeContext } from './AuthorizeProvider';
+import { AuthorizeContext } from '../components/AuthorizeProvider';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import background from './bg_5.jpg'
-import { deleteError, getDetailError } from './ErrorMessages';
+import { deleteError, getDetailError } from '../assets/ErrorMessages';
 
 type detailType = {
   id: string,

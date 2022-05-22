@@ -2,7 +2,7 @@ import { memo, FC, ReactElement, useState, useContext, useRef } from 'react';
 import { AuthorizeContext } from './AuthorizeProvider';
 import ReviewCard from './ReviewCard';
 import InfiniteScroll from 'react-infinite-scroller';
-import { getReviewError } from './ErrorMessages';
+import { getReviewError } from '../assets/ErrorMessages';
 
 type ReviewType = {
   detail: string,
