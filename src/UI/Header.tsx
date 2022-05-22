@@ -1,8 +1,8 @@
 import { FC, ReactElement, useContext } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { AuthorizeContext } from './AuthorizeProvider';
-import bookLogo from './bookLogo.svg';
-import userIcon from './userIcon.svg';
+import { AuthorizeContext } from '../components/AuthorizeProvider';
+import bookLogo from '../assets/bookLogo.svg';
+import userIcon from '../assets/userIcon.svg';
 
 type HeaderProps = {
   userName: string | null;
@@ -30,7 +30,7 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
               <img src={bookLogo} className="logo my-auto" alt="logo" />
               <h1 className="h3 text-white my-auto">Book Review</h1>
             </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
@@ -45,7 +45,7 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
                   <Link className={`${location.pathname === '/new' ? 'header-active' : 'header-link'}`} to="/new">レビュー投稿</Link>
                 </li>
                 <li className="nav-item my-auto mx-3">
-                  <Link className="header-link" onClick={()=>{logOut()}} to="/login">ログアウト</Link>
+                  <Link className="header-link" onClick={() => { logOut() }} to="/login">ログアウト</Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/profile" >
@@ -61,7 +61,7 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
         </nav>
       </header>
     </>
-  ): (
+  ) : (
     <>
       <header className="App-header">
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -70,7 +70,7 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
               <img src={bookLogo} className="logo my-auto" alt="logo" />
               <h1 className="h3 text-white my-auto">Book Review</h1>
             </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse menu" id="navbarSupportedContent">
