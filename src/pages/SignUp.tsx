@@ -1,9 +1,10 @@
-import { memo, ReactElement, useRef, useState, useContext, FC } from 'react';
+import { memo, ReactElement, useRef, useState, useContext, FC, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import bookLogo from '../assets/bookLogo.svg';
 import { AuthorizeContext } from '../components/AuthorizeProvider';
 import background from '../assets/bg_6.jpg';
 import { signupError } from '../utils/ErrorMessages';
+import { useUserAPI } from '../hooks/useUserAPI'
 
 type UserInputType = {
   name: string,
@@ -44,6 +45,8 @@ const SignUp: FC<SignUpProps> = memo(({ setIsError }): ReactElement => {
   const emailWarningRef = useRef<HTMLDivElement>(null!);
   // 認証コンテキストを使用
   const authContext = useContext(AuthorizeContext);
+
+  const api = useUserAPI();
 
   const checkInput = (): void => {
     // ユーザーの入力をstateに反映
@@ -117,10 +120,10 @@ const SignUp: FC<SignUpProps> = memo(({ setIsError }): ReactElement => {
   };
 
   // 登録処理
-  const signup = async (): Promise<void> => {
+  const signup2 = async (): Promise<void> => {
     // フォームを値をチェックしてから値を送信するか決める
     if (isFormValid) {
-      const userInfo: object = {
+      const userInfo = {
         "name": userInput.name,
         "email": userInput.email,
         "password": userInput.password,
@@ -158,6 +161,8 @@ const SignUp: FC<SignUpProps> = memo(({ setIsError }): ReactElement => {
         setIsError(true);
       })
 
+      // const response: responseType = test.signup(userInfo)
+
       if (response) {
         localStorage.setItem('v_|2Q)iA~*rn%', response.token!);
         authContext.setUserToken(response.token!);
@@ -172,6 +177,27 @@ const SignUp: FC<SignUpProps> = memo(({ setIsError }): ReactElement => {
       }
     }
   };
+
+  const signup = () => {
+    if (isFormValid) {
+      const userInfo = {
+        "name": userInput.name,
+        "email": userInput.email,
+        "password": userInput.password,
+      }
+      api.signup(userInfo);
+    }
+    else {
+      if (nameRef.current.value === '' || emailRef.current.value === '' || passwordRef.current.value === '') {
+        ErrorRef.current.innerHTML = signupError.formInvalid;
+        ErrorRef.current.style.display = 'block';
+      }
+    }
+  }
+
+  useEffect(() => {
+
+  }, [api.isError])
 
   return (
     <div id="signupPage">
