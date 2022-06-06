@@ -1,9 +1,9 @@
 import { memo, FC, ReactElement, useState, useContext, useRef, useEffect } from 'react';
 import InfiniteScroll from "react-infinite-scroller"
 import { AuthorizeContext } from '../components/AuthorizeProvider';
-import background from '../assets/bg_5.jpg'
 import ReviewCard from '../components/ReviewCard';
 import { getReviewError } from '../utils/ErrorMessages';
+import PageContainer from '../components/PageContainer'
 
 type ReviewType = {
   detail: string,
@@ -157,9 +157,8 @@ const ReviewIndex: FC<ReviewIndexProps> = memo(({ setIsError }): ReactElement =>
   }, [])
 
   return (
-    <div id="reviewPage">
-      <img className="bg-bookshelf fixed-top" src={background} alt="背景" />
-      <div className="container-fuild container-lg">
+    <PageContainer id='reviewPage'>
+      <>
         <div className="errorMessage alert alert-warning mt-3" ref={ErrorRef} role="alert"></div>
         <button
           className="btn btn-secondary filter-btn"
@@ -232,8 +231,8 @@ const ReviewIndex: FC<ReviewIndexProps> = memo(({ setIsError }): ReactElement =>
         >
           {items}
         </InfiniteScroll>
-      </div>
-    </div>
+      </>
+    </PageContainer>
   )
 })
 

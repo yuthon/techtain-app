@@ -1,54 +1,62 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import { useAPI } from './useAPI';
 import { AuthorizeContext } from '../components/AuthorizeProvider';
 import { useAuthorize } from './useAuthorize'
-
-interface responseType {
-  token?: string;
-  name?: string;
-  id?: string;
-  title?: string;
-  url?: string;
-  detail?: string;
-  review?: string;
-  reviewer?: string;
-  isMine?: boolean;
-  Error?: string;
-}
-
-interface userInputType {
-  userName?: string;
-  email: string;
-  password: string;
-}
+import { useDispatch } from 'react-redux';
+import { useSelector } from '../redux/store/store';
+import { useFormValidation } from '../hooks/useFormValidation';
+import { setResStatus } from '../redux/slice/responseSlice';
+import { setIsPasswordInputValid } from '../redux/slice/passwordInputSlice';
+import { setIsEmailInputValid } from '../redux/slice/emailInputSlice';
 
 export const useUserAPI = () => {
   const api = useAPI();
   const url = 'https://api-for-missions-and-railways.herokuapp.com/users';
   const authContext = useContext(AuthorizeContext);
   const authAction = useAuthorize();
+  const emailState = useSelector((state) => state.emailInput);
+  const passwordState = useSelector((state) => state.passwordInput);
+  const isFormValid = useFormValidation([emailState, passwordState]);
+  const dispatch = useDispatch();
 
-  const login = async (userInput: object) => {
-    await api.call(
-      'https://api-for-missions-and-railways.herokuapp.com/signin',
-      { method: 'POST', body: JSON.stringify(userInput) }
-    )
-    if (!api.isError) {
-      authAction.authorize(api.response!.token);
+  const login = async () => {
+    if (isFormValid) {
+      const response = await api.call(
+        'https://api-for-missions-and-railways.herokuapp.com/signin',
+        {
+          method: 'POST', body: JSON.stringify({
+            "email": emailState.input,
+            "password": passwordState.input
+          })
+        }
+      )
+
+      if (response) {
+        authAction.authorize(response!.token);
+      }
+      else {
+        authAction.unAuthorize();
+      }
     }
     else {
-      authAction.unAuthorize();
+      dispatch(setResStatus(null));
+      if (passwordState.input === '') {
+        dispatch(setIsPasswordInputValid(false));
+      }
+      if (emailState.input === '') {
+        dispatch(setIsEmailInputValid(false));
+      }
     }
   };
 
-  const signup = async (userInput: object) => {
-    await api.call(
+  const signup = async function (userInput: object) {
+    const response = await api.call(
       url,
       { method: 'POST', body: JSON.stringify(userInput) }
     )
-    console.log(api.response)
-    if (!api.isError) {
-      authAction.authorize(api.response!.token);
+
+    if (response) {
+      authAction.authorize(response!.token);
     }
     else {
       authAction.unAuthorize();
@@ -76,5 +84,5 @@ export const useUserAPI = () => {
     )
   }
 
-  return { isError: api.isError, response: api.response, resStatus: api.resStatus, loginAPI: login, signup: signup, getUser: getUser, updateUserAPI: updateUser } as const;
+  return { login: login, signup: signup, getUser: getUser, updateUserAPI: updateUser } as const;
 }

@@ -83,8 +83,8 @@ const Main = (): ReactElement => {
         </div>
       ) : (null)}
       <Routes>
-        <Route path="signup" element={authContext.isAuthorized ? <Navigate to="/" /> : <SignUp setIsError={setIsError} />} />
-        <Route path="login" element={authContext.isAuthorized ? <Navigate to="/" /> : <LogIn setIsError={setIsError} />} />
+        <Route path="signup" element={authContext.isAuthorized ? <Navigate to="/" /> : <SignUp />} />
+        <Route path="login" element={authContext.isAuthorized ? <Navigate to="/" /> : <LogIn />} />
         {/* ログインしていれば認証付きの一覧ページに、していなければ認証なしの一覧ページに */}
         <Route path="/" element={!authContext.isAuthorized ? <Navigate to="/login" /> : <ReviewIndex setIsError={setIsError} />} />
         <Route
