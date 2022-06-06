@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface emailInputState { input: string, isValid: boolean }
 
-const initialState: emailInputState = { input: '', isValid: true };
+const initialState: emailInputState = { input: '', isValid: false };
 
 export const emailInputSlice = createSlice({
   name: 'emailInput',

@@ -10,13 +10,9 @@ const LoginForm = () => {
   const isError = useSelector((state) => state.error.isError);
 
   return (
-    <div className="form" id="login-form">
-      <div className="mb-3">
-        <EmailInput />
-      </div>
-      <div className="mb-3">
-        <PasswordInput />
-      </div>
+    <div className="form mt-5" id="login-form">
+      <EmailInput />
+      <PasswordInput />
       <div className="d-flex flex-wrap justify-content-between" id="signupOrLogin">
         <LoginButton />
         <p className="my-auto">または</p>

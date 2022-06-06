@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface passwordInputState { input: string, isValid: boolean }
 
-const initialState: passwordInputState = { input: '', isValid: true };
+const initialState: passwordInputState = { input: '', isValid: false };
 
 export const passwordInputSlice = createSlice({
   name: 'passwordInput',

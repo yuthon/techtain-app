@@ -4,10 +4,7 @@ import { AuthorizeContext } from '../components/AuthorizeProvider';
 import { useAuthorize } from './useAuthorize'
 import { useDispatch } from 'react-redux';
 import { useSelector } from '../redux/store/store';
-import { useFormValidation } from '../hooks/useFormValidation';
 import { setResStatus } from '../redux/slice/responseSlice';
-import { setIsPasswordInputValid } from '../redux/slice/passwordInputSlice';
-import { setIsEmailInputValid } from '../redux/slice/emailInputSlice';
 
 export const useUserAPI = () => {
   const api = useAPI();
@@ -16,11 +13,10 @@ export const useUserAPI = () => {
   const authAction = useAuthorize();
   const emailState = useSelector((state) => state.emailInput);
   const passwordState = useSelector((state) => state.passwordInput);
-  const isFormValid = useFormValidation([emailState, passwordState]);
   const dispatch = useDispatch();
 
   const login = async () => {
-    if (isFormValid) {
+    if (emailState.isValid && passwordState.isValid) {
       const response = await api.call(
         'https://api-for-missions-and-railways.herokuapp.com/signin',
         {
@@ -40,12 +36,6 @@ export const useUserAPI = () => {
     }
     else {
       dispatch(setResStatus(null));
-      if (passwordState.input === '') {
-        dispatch(setIsPasswordInputValid(false));
-      }
-      if (emailState.input === '') {
-        dispatch(setIsEmailInputValid(false));
-      }
     }
   };
 
