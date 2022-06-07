@@ -1,7 +1,6 @@
 import { FC, ReactElement, useContext } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { AuthorizeContext } from '../components/AuthorizeProvider';
-import bookLogo from '../assets/bookLogo.svg';
 import userIcon from '../assets/userIcon.svg';
 import Logo from '../components/Logo';
 
@@ -67,8 +66,7 @@ const Header: FC<HeaderProps> = ({ userName }): ReactElement => {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
             <Link className="navbar-brand d-flex" to="/" >
-              <img src={bookLogo} className="logo my-auto" alt="logo" />
-              <h1 className="h3 text-white my-auto">Book Review</h1>
+              <Logo size={1.75} />
             </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>

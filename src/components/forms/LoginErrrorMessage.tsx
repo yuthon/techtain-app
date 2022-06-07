@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import FormErrorMessage from './FormErrorMessage';
-import { loginError } from '../utils/ErrorMessages';
-import { useSelector } from '../redux/store/store';
+import { loginError } from '../../utils/ErrorMessages';
+import { useSelector } from '../../redux/store/store';
 
 const LoginErrorMessage = (): ReactElement | null => {
   const resStatus = useSelector((state) => state.response.resStatus)

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import LoginErrorMessage from '../LoginErrrorMessage';
+import LoginErrorMessage from './LoginErrrorMessage';
 import EmailInput from '../inputs/EmailInput';
 import PasswordInput from '../inputs/PasswordInput';
 import LoginButton from '../buttons/LoginButton';

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useSelector } from '../../redux/store/store';
 import { setPasswordInput } from '../../redux/slice/passwordInputSlice';
 import { useDispatch } from 'react-redux';
-import InputFeedback from '../InputFeedback';
+import InputFeedback from './InputFeedback';
 import { useInputValidation } from '../../hooks/useInputCheck';
 
 const PasswordInput = () => {

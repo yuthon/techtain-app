@@ -53,12 +53,6 @@ a {
   margin: 0 auto;
 }
 
-.logo {
-  width: 26px;
-  height: 26px;
-  margin-right: 5px;
-}
-
 .title {
   margin-left: 20px;
 }
@@ -173,12 +167,6 @@ a {
 
 #signupPage {
   padding-top: 10vh;
-}
-
-.signupPage-logo {
-  width: 2rem;
-  margin-right: 8px;
-  margin-bottom: 0.5rem;
 }
 
 #signupForm {
@@ -308,16 +296,6 @@ a {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
-}
-
-.logo-loginPage {
-  width: 3.75rem;
-  height: 3.75rem;
-}
-
-.logoText-loginPage {
-  font-size: 4rem;
-  margin-left: 0.5rem;
 }
 
 .errorMessage {

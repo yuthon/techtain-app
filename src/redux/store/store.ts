@@ -6,6 +6,8 @@ import responseReducer from '../slice/responseSlice';
 import emailInputReducer from '../slice/emailInputSlice';
 import passwordInputReducer from '../slice/passwordInputSlice';
 import formValidationReducer from '../slice/formValidationSlice';
+import userNameInputReducer from '../slice/userNameInputSlice';
+import passwordConfirmInputReducer from "../slice/passwordConfirmInputSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +17,8 @@ export const store = configureStore({
     emailInput: emailInputReducer,
     passwordInput: passwordInputReducer,
     formValidation: formValidationReducer,
+    userNameInput: userNameInputReducer,
+    passwordConfirmInput: passwordConfirmInputReducer,
   }
 })
 

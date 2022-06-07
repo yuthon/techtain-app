@@ -11,8 +11,10 @@ export const useUserAPI = () => {
   const url = 'https://api-for-missions-and-railways.herokuapp.com/users';
   const authContext = useContext(AuthorizeContext);
   const authAction = useAuthorize();
-  const emailState = useSelector((state) => state.emailInput);
-  const passwordState = useSelector((state) => state.passwordInput);
+  const userNameState = useSelector(state => state.userNameInput);
+  const emailState = useSelector(state => state.emailInput);
+  const passwordState = useSelector(state => state.passwordInput);
+  const passwordConfirmState = useSelector(state => state.passwordConfirmInput);
   const dispatch = useDispatch();
 
   const login = async () => {
@@ -39,17 +41,35 @@ export const useUserAPI = () => {
     }
   };
 
-  const signup = async function (userInput: object) {
-    const response = await api.call(
-      url,
-      { method: 'POST', body: JSON.stringify(userInput) }
-    )
+  const signup = async () => {
+    if (
+      emailState.isValid &&
+      passwordState.isValid &&
+      userNameState.isValid &&
+      passwordConfirmState.isValid
+    ) {
+      const response = await api.call(
+        url,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            "name": userNameState.input,
+            "email": emailState.input,
+            "password": passwordState.input
+          }
+          )
+        }
+      )
 
-    if (response) {
-      authAction.authorize(response!.token);
+      if (response) {
+        authAction.authorize(response!.token);
+      }
+      else {
+        authAction.unAuthorize();
+      }
     }
     else {
-      authAction.unAuthorize();
+      dispatch(setResStatus(null));
     }
   };
 
