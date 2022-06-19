@@ -4,15 +4,23 @@ import { setIsEmailInputValid } from '../redux/slice/emailInputSlice';
 import { setIsPasswordInputValid } from '../redux/slice/passwordInputSlice';
 import { setIsPasswordConfirmInputValid } from '../redux/slice/passwordConfirmInputSlice';
 import { setIsUserNameInputValid } from '../redux/slice/userNameInputSlice';
+import { setIsTitleInputValid } from '../redux/slice/titleInputSlice';
+import { setIsDetailInputValid } from '../redux/slice/detailInputSlice';
+import { setIsUrlInputValid } from '../redux/slice/urlInputSlice';
+import { setIsReviewTextInputValid } from '../redux/slice/reviewTextInputSlice';
 import { useLocation } from "react-router-dom";
 import { setNeedValidation } from '../redux/slice/formValidationSlice';
 import { useEffect } from 'react';
 
 export const useInputValidation = () => {
-  const emailInput = useSelector((state) => state.emailInput.input);
-  const passwordInput = useSelector((state) => state.passwordInput.input);
-  const passwordConfirmInput = useSelector((state) => state.passwordConfirmInput.input);
-  const userNameInput = useSelector((state) => state.userNameInput.input);
+  const emailInput = useSelector(state => state.emailInput.input);
+  const passwordInput = useSelector(state => state.passwordInput.input);
+  const passwordConfirmInput = useSelector(state => state.passwordConfirmInput.input);
+  const userNameInput = useSelector(state => state.userNameInput.input);
+  const tilteInput = useSelector(state => state.titleInput.input)
+  const detailInput = useSelector(state => state.detailInput.input)
+  const urlInput = useSelector(state => state.urlInput.input)
+  const reviewTextInput = useSelector(state => state.reviewTextInput.input)
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -69,5 +77,41 @@ export const useInputValidation = () => {
     }
   };
 
-  return { checkEmail: checkEmail, checkPassword: checkPassword, checkUserName: checkUserName, checkPasswordConfirm: checkPasswordConfirm } as const
+  const checkTitle = () => {
+    if (tilteInput === '') {
+      dispatch(setIsTitleInputValid(false));
+    }
+    else {
+      dispatch(setIsTitleInputValid(true));
+    }
+  };
+
+  const checkDetail = () => {
+    if (detailInput === '') {
+      dispatch(setIsDetailInputValid(false));
+    }
+    else {
+      dispatch(setIsDetailInputValid(true));
+    }
+  };
+
+  const checkUrl = () => {
+    if (urlInput === '') {
+      dispatch(setIsUrlInputValid(false));
+    }
+    else {
+      dispatch(setIsUrlInputValid(true));
+    }
+  };
+
+  const checkReviewText = () => {
+    if (reviewTextInput === '') {
+      dispatch(setIsReviewTextInputValid(false));
+    }
+    else {
+      dispatch(setIsReviewTextInputValid(true));
+    }
+  };
+
+  return { checkEmail: checkEmail, checkPassword: checkPassword, checkUserName: checkUserName, checkPasswordConfirm: checkPasswordConfirm, checkTitle: checkTitle, checkDetail: checkDetail, checkUrl: checkUrl, checkReviewText: checkReviewText } as const
 }

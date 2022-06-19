@@ -1,9 +1,9 @@
-import { memo, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import LoginForm from '../components/forms/LoginForm';
 import PageContainer from '../components/PageContainer';
 import Logo from '../components/Logo';
 
-const LogIn = memo((): ReactElement => {
+const LogIn = (): ReactElement => {
   return (
     <PageContainer id='loginPage'>
       <>
@@ -12,6 +12,6 @@ const LogIn = memo((): ReactElement => {
       </>
     </PageContainer>
   )
-})
+}
 
 export default LogIn;

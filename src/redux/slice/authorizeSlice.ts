@@ -11,7 +11,7 @@ export const authorizeSlice = createSlice({
     setIsAuthorized: (state: authorizeState, action: PayloadAction<boolean>) => {
       state.isAuthorized = action.payload;
     },
-    setToken: (state: authorizeState, action: PayloadAction<string>) => {
+    setToken: (state: authorizeState, action: PayloadAction<string | null>) => {
       state.token = action.payload;
     }
   }

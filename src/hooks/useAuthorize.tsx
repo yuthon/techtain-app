@@ -1,19 +1,20 @@
-import { useContext } from 'react';
-import { AuthorizeContext } from '../components/AuthorizeProvider';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../redux/slice/authorizeSlice';
+import { setIsAuthorized } from '../redux/slice/authorizeSlice';
 
 export const useAuthorize = () => {
-  const { setUserToken, setIsAuthorized } = useContext(AuthorizeContext);
+  const dispatch = useDispatch();
 
   const authorize = (token: string | undefined) => {
     localStorage.setItem('v_|2Q)iA~*rn%', token!);
-    setUserToken(token!);
-    setIsAuthorized(true);
+    dispatch(setToken(token!));
+    dispatch(setIsAuthorized(true));
   };
 
   const unAuthorize = () => {
     localStorage.removeItem('v_|2Q)iA~*rn%');
-    setUserToken(null);
-    setIsAuthorized(false);
+    dispatch(setToken(null));
+    dispatch(setIsAuthorized(false));
   };
 
   return { authorize: authorize, unAuthorize: unAuthorize } as const;
